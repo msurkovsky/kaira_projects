@@ -1,0 +1,258 @@
+<project target_env="C++"><configuration><parameter default="10" description="number of ants" name="Ants" policy="mandatory" type="Int" /><parameter default="5" description="number of generation" name="Generation" policy="mandatory" type="Int" /><build-option name="CC">g++</build-option><build-option name="LIBS" /><build-option name="CFLAGS">-O2 -I /home/sur096/projects/projects_in_kaira/ACO_new/</build-option><build-option name="OTHER_FILES">arg/utils/cTimer.cpp
+arg/utils/cRandom.cpp
+arg/utils/cCLParser.cpp
+arg/core/cDebuggable.cpp
+aco/cAnt.cpp
+aco/cAntColony.cpp
+aco/cAntFactory.cpp
+aco/tsp/cTspAnt.cpp
+aco/tsp/cTspAntFactory.cpp</build-option><head-code>#include "arg/utils/cRandom.h"
+#include "arg/utils/cCLParser.h"
+
+#include "aco/cAntColony.h"
+#include "aco/tsp/cTspAntFactory.h"
+
+#include &lt;string&gt;
+#include &lt;sstream&gt;
+
+//#define WIDTH 4
+unsigned int TrailLength;
+//#define TRAIL_DATA_SIZE (sizeof(unsigned long) * TrailLenght)
+
+
+struct AntColony {
+	AntColony() { colony = NULL; }
+	AntColony(cAntColony *colony) { this-&gt;colony = colony; }
+	
+	cAntColony *colony;
+};
+
+class Trail {
+	
+	public:
+
+	Trail() {
+		array = new unsigned long[TrailLength];
+	}
+
+	Trail(const unsigned long *data) {
+		array = new unsigned long[TrailLength];
+		set_raw_data(data);
+	}
+
+	~Trail() {
+		delete [] array;
+	}
+
+	Trail(const Trail &amp;c) {
+		array = new unsigned long[TrailLength];
+		set_raw_data(c.get_raw_data());
+	}
+
+	Trail &amp; operator= (const Trail &amp; c) {
+        	if (this != &amp;c)
+		{
+			set_raw_data(c.get_raw_data());
+        	}
+        	return *this;
+	}
+	
+	unsigned long &amp; operator[] (unsigned int Index) {
+		return array[Index];
+	} 
+
+	const unsigned long * get_raw_data() const { return array; }
+	
+	void set_raw_data(const unsigned long *data) {
+		memcpy(array, data, (sizeof(unsigned long) * TrailLength));
+	}
+
+	public:
+		unsigned long *array;
+
+};
+
+struct CostTrail {
+	Trail trail;
+	double cost;
+};
+
+double traceCost(CostTrail &amp;ct) {
+	return ct.cost;
+}
+
+namespace ca {
+	std::string token_name(CostTrail &amp;obj) {
+		std::stringstream ss;
+		ss &lt;&lt; "cost(trail): ";
+		ss.setf(std::ios::fixed);
+		ss.precision(5);
+		ss &lt;&lt; obj.cost;
+		return ss.str();
+	}
+	
+	std::string token_name(Trail &amp;obj) {
+		return "Trail";
+	}
+	
+	std::string token_name(AntColony &amp;obj) {
+		return "AntColony";
+	}
+	
+	void pack(Packer &amp;packer, Trail &amp;trail) {
+		void *data = (void *) trail.get_raw_data();
+		size_t size = sizeof(unsigned long) * TrailLength;
+		pack(packer, data, size);
+	}
+	
+	template&lt;&gt; Trail unpack(Unpacker &amp;unpacker) {
+		Trail t;
+		size_t size = sizeof(unsigned long) * TrailLength;
+		void *data = unpack(unpacker, size);
+		t.set_raw_data((unsigned long *) data);	
+		return t;
+	}
+	
+	void pack(Packer &amp;packer, CostTrail &amp;obj) {
+		pack(packer, obj.cost);
+		pack(packer, obj.trail);
+	}
+	
+	template&lt;&gt; CostTrail unpack(Unpacker &amp;unpacker) {
+		CostTrail ct;
+		ct.cost = unpack&lt;double&gt;(unpacker);
+		ct.trail = unpack&lt;Trail&gt;(unpacker);
+		return ct;
+	}
+};</head-code></configuration><net id="0" name="Main" net-type="main"><edge from_item="105" id="314" inscription="param::Generation()" inscription_x="290.0" inscription_y="375.0" to_item="112" /><edge from_item="103" id="335" inscription="colony" inscription_x="175.0" inscription_y="200.0" to_item="112"><point x="160" y="216" /><point x="162" y="429" /></edge><edge from_item="338" id="340" inscription="[bulk] received" inscription_x="558.0" inscription_y="261.0" to_item="135"><point x="655" y="276" /></edge><edge from_item="135" id="339" inscription="[bulk, multicast] send @ workers" inscription_x="517.0" inscription_y="324.0" to_item="338"><point x="428" y="340" /></edge><edge from_item="135" id="313" inscription="gen + 1" inscription_x="315.0" inscription_y="318.0" to_item="105"><point x="334" y="334" /></edge><edge from_item="105" id="213" inscription="gen" inscription_x="286.0" inscription_y="262.0" to_item="135"><point x="230" y="278" /></edge><edge bidirectional="true" from_item="135" id="139" inscription="colony" inscription_x="296.0" inscription_y="201.0" to_item="103"><point x="326" y="218" /></edge><edge from_item="148" id="150" inscription="[bulk, guard(size == ctx.process_count())] bests" inscription_x="389.0" inscription_y="519.0" to_item="147" /><edge from_item="112" id="182" inscription="best@0" inscription_x="258.0" inscription_y="475.0" to_item="148" /><edge from_item="152" id="174" inscription="best" inscription_x="325.0" inscription_y="413.0" to_item="112" /><edge bidirectional="true" from_item="135" id="334" inscription="best" inscription_x="417.0" inscription_y="355.0" to_item="152" /><place id="103" init_string="" name="" place_type="AntColony" radius="21" sx="0" sy="0" x="226" y="218"><code>	
+	arg::cRandom::Init();
+	
+	const bool debug = false;//cl.Boolean("d") || cl.Boolean("-debug");
+	const bool minimize = true;//cl.Boolean("minimize");
+	const bool verbose = true;//cl.Boolean("v");
+	const unsigned int gen = param::Generation();//cl.Integer("gen", 10);
+
+	cTspAntFactory *factory = new cTspAntFactory("eil51.tsp");
+
+	factory-&gt;Debug(debug);
+	factory-&gt;Power(0);
+
+	cAntColony *aco = new cAntColony(factory, param::Ants());
+	aco-&gt;Rho(0.01);
+	aco-&gt;Alpha(1);
+	aco-&gt;Beta(1);
+	aco-&gt;RoundBestBoost(1);
+	aco-&gt;GlobalBestBoost(10);
+	aco-&gt;MaxMin(0);
+	aco-&gt;Minimize(minimize);
+	aco-&gt;AcoType(cAntColony::ACO_ELITIST_ANT_SYSTEM_GLOBAL | cAntColony::ACO_ELITIST_ANT_SYSTEM_ROUND);
+	aco-&gt;Debug(debug);
+	TrailLength = aco-&gt;GetAnt(0)-&gt;GraphDim();
+
+	aco-&gt;StartExecution();
+	
+	//tokens.push_back(AntColony(aco));
+	place.add(AntColony(aco));
+</code></place><place id="105" init_string="[0]" name="Counter" place_type="int" radius="22" sx="17" sy="0" x="223" y="334" /><place id="338" init_string="" name="Ant distribution" place_type="CostTrail" radius="20" sx="56" sy="0" x="627" y="340" /><place id="148" init_string="" name="" place_type="CostTrail" radius="21" sx="0" sy="0" x="232" y="537" /><place id="152" init_string="" name="Best trail" place_type="CostTrail" radius="21" sx="21" sy="0" x="389" y="430"><code>	CostTrail ct;
+	ct.cost = -1;
+	ct.trail = Trail();
+	place.add(ct);
+	//tokens.push_back(Tuple2_Double_Trail(-1, Trail()));
+</code><trace name="traceCost" return-type="double" /></place><transition guard="" id="112" name="Send Result" sx="86" sy="42" x="232" y="429"><code>	delete var.colony.colony;
+</code></transition><transition guard="" id="147" name="Write result" sx="94" sy="40" x="610" y="537"><code>	//double fit = var.bests[0].t0;
+	ca::Token&lt;CostTrail &gt; *t = var.bests.begin();
+	double fit = t-&gt;value.cost;
+	Trail trail = t-&gt;value.trail;
+
+
+	/*for(int i = 0 ; i &lt; var.bests.size() ; i++){
+		if(fit &gt; var.bests[i].t0) {
+			fit = var.bests[i].t0;
+			trail = var.bests[i].t1;
+		}
+	}*/
+	
+	t = var.bests.next(t);
+	while(t != NULL) {
+		if (fit &gt; t-&gt;value.cost) {
+			fit = t-&gt;value.cost;
+			trail = t-&gt;value.trail;
+		}
+		t = var.bests.next(t);
+	}
+	printf("Nejlepsi cesta s delkou %5.2f je pres mesta [", fit);
+	for(unsigned int i = 0 ; i &lt; TrailLength - 1 ; i++){
+		printf(" %ld,", trail[i]);
+	}
+	printf(" %ld ]\n", trail[TrailLength - 1]);
+
+	ctx.quit();
+</code></transition><transition guard="gen &lt; param::Generation()" id="135" name="Compute" sx="82" sy="42" x="394" y="278"><code>	
+	ca::Token&lt;CostTrail &gt; *t = var.received.begin();
+	while (t != NULL) {
+		if (var.best.cost &gt; t-&gt;value.cost || var.best.cost == -1) {
+			var.best.cost = t-&gt;value.cost;
+			var.best.trail = t-&gt;value.trail;
+		}
+		t = var.received.next(t);
+	}
+	if (var.best.cost != -1 &amp;&amp; var.best.cost &lt; var.colony.colony-&gt;BestAntPtr(false)-&gt;Fitness()) {
+		var.colony.colony-&gt;SetBestAntTrail(var.best.trail.get_raw_data(), var.best.cost);
+	}
+	
+	var.colony.colony-&gt;Execution();
+	
+	double fitness = var.colony.colony-&gt;BestAntPtr(true)-&gt;Fitness();
+	Trail trail;
+	if (fitness &lt; var.best.cost || var.best.cost == -1) {
+		for (int i = 0; i &lt; ctx.process_count(); i++) {
+			if (i != ctx.process_id()) {
+				var.workers.push_back(i);
+			}
+		}
+		const arg::cArrayConst&lt;unsigned long&gt; &amp;trailAnt = var.colony.colony-&gt;BestAntPtr(false)-&gt;Trail();
+		for (unsigned int i = 0; i &lt; trailAnt.Count(); i++) {
+			trail[i] = trailAnt[i];
+		}
+		CostTrail ct;
+		ct.cost = fitness;
+		ct.trail = trail;
+		var.best = ct;
+		
+		CostTrail ct2;
+		ct2.cost = fitness;
+		ct2.trail = trail;
+		var.send.add(ct2);
+	}
+	//////
+	/*for(int i = 0 ; i &lt; var.received.size() ; i++){
+		if(var.best.t0 &gt; var.received[i].t0 || var.best.t0 == -1){
+			var.best.t0 = var.received[i].t0;
+			var.best.t1 = var.received[i].t1;
+		}
+	}
+	if(var.best.t0 != -1 &amp;&amp; var.best.t0 &lt; var.colony.colony-&gt;BestAntPtr(false)-&gt;Fitness()) {
+		var.colony.colony-&gt;SetBestAntTrail(var.best.t1.get_raw_data(), var.best.t0);
+	}
+
+
+	var.colony.colony-&gt;Execution();
+
+	double fitness = var.colony.colony-&gt;BestAntPtr(true)-&gt;Fitness();
+	Trail trail;
+	if(fitness &lt; var.best.t0 || var.best.t0 == -1) {
+		for(int i = 0 ; i &lt; ctx.process_count() ; i++)
+		{
+			if(i != ctx.process_id())
+			{
+				var.workers.push_back(i);
+			}
+		}
+		const arg::cArrayConst&lt;unsigned long&gt; &amp; trailAnt = var.colony.colony-&gt;BestAntPtr(false)-&gt;Trail();
+		for(unsigned int i = 0 ; i &lt; trailAnt.Count() ; i++) {
+			trail[i] = trailAnt[i];
+		}
+		var.best = Tuple2_Double_Trail(fitness, trail);
+		var.send.push_back(Tuple2_Double_Trail(fitness, trail));
+	}*/
+</code></transition><area id="102" init-expr="ca::range(0, ctx.process_count())" name="" sx="627" sy="311" x="138" y="181" /></net></project>
