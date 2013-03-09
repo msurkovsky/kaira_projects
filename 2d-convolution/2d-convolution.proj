@@ -1,4 +1,5 @@
-<project target_env="C++"><configuration><parameter default="24" description="Width of matrix" name="width" policy="mandatory" type="unsigned int" /><parameter default="24" description="height of matrix" name="height" policy="mandatory" type="unsigned int" /><parameter default="1" description="divide in along x axes" name="divide_x" policy="mandatory" type="int" /><parameter default="1" description="divide along y axes" name="divide_y" policy="mandatory" type="int" /><build-option name="CC">g++</build-option><build-option name="LIBS" /><build-option name="CFLAGS">-O2</build-option><head-code>#include &lt;matrix.h&gt;
+<project target_env="C++"><configuration><parameter default="24" description="Width of matrix" name="width" policy="mandatory" type="unsigned int" /><parameter default="24" description="height of matrix" name="height" policy="mandatory" type="unsigned int" /><parameter default="1" description="divide in along x axes" name="divide_x" policy="mandatory" type="int" /><parameter default="1" description="divide along y axes" name="divide_y" policy="mandatory" type="int" /><build-option name="CC">g++</build-option><build-option name="LIBS" /><build-option name="CFLAGS">-O2</build-option><head-code>#include &lt;fstream&gt;
+#include &lt;matrix.h&gt;
 
 namespace ca {
 
@@ -20,7 +21,7 @@ namespace ca {
 		matrix.deserialize(mem);
 		return matrix;
 	}
-}</head-code></configuration><net id="101" name="Main" net-type="main"><edge from_item="102" id="105" inscription="matrix" inscription_x="-410.0" inscription_y="-223.0" to_item="104" /><edge from_item="104" id="108" inscription="[bulk] blocks" inscription_x="-242.0" inscription_y="-222.0" to_item="107" /><edge bidirectional="true" from_item="109" id="114" inscription="mask" inscription_x="-356.0" inscription_y="-84.0" to_item="104"><point x="-331" y="-69" /></edge><edge from_item="116" id="119" inscription="c" inscription_x="-204.0" inscription_y="-132.0" to_item="115"><point x="-233" y="-135" /></edge><edge from_item="115" id="120" inscription="c+1" inscription_x="-253.0" inscription_y="-50.0" to_item="116"><point x="-227" y="-38" /></edge><edge from_item="107" id="122" inscription="block" inscription_x="-139.0" inscription_y="-157.0" to_item="115" /><edge from_item="115" id="124" inscription="block@c" inscription_x="-130.0" inscription_y="-38.0" to_item="123" /><edge from_item="123" id="126" inscription="block" inscription_x="-221.0" inscription_y="13.0" to_item="125" /><edge bidirectional="true" from_item="109" id="127" inscription="mask" inscription_x="-382.0" inscription_y="13.0" to_item="125"><point x="-428" y="26" /></edge><edge from_item="125" id="129" inscription="block@0" inscription_x="-270.0" inscription_y="59.0" to_item="128" /><edge from_item="128" id="131" inscription="[bulk, origin, guard(size == (param::divide_x() * param::divide_y()))] blocks" inscription_x="-106.0" inscription_y="140.0" to_item="130" /><edge from_item="109" id="132" inscription="mask" inscription_x="-386.0" inscription_y="172.0" to_item="130"><point x="-531" y="188" /></edge><place id="102" init_string="" name="" place_type="Matrix&lt;float&gt;" radius="20" sx="0" sy="0" x="-564" y="-205"><code>	Matrix&lt;float&gt; matrix(param::width(), param::height());
+}</head-code></configuration><net id="101" name="Main" net-type="main"><edge from_item="102" id="105" inscription="matrix" inscription_x="-410.0" inscription_y="-223.0" to_item="104" /><edge from_item="104" id="108" inscription="[bulk] blocks" inscription_x="-242.0" inscription_y="-222.0" to_item="107" /><edge bidirectional="true" from_item="109" id="114" inscription="mask" inscription_x="-356.0" inscription_y="-84.0" to_item="104"><point x="-331" y="-69" /></edge><edge from_item="116" id="119" inscription="c" inscription_x="-204.0" inscription_y="-132.0" to_item="115"><point x="-233" y="-135" /></edge><edge from_item="115" id="120" inscription="c+1" inscription_x="-253.0" inscription_y="-50.0" to_item="116"><point x="-227" y="-38" /></edge><edge from_item="107" id="122" inscription="block" inscription_x="-139.0" inscription_y="-157.0" to_item="115" /><edge from_item="115" id="124" inscription="block@c" inscription_x="-130.0" inscription_y="-38.0" to_item="123" /><edge from_item="123" id="126" inscription="block" inscription_x="-221.0" inscription_y="13.0" to_item="125" /><edge bidirectional="true" from_item="109" id="127" inscription="mask" inscription_x="-382.0" inscription_y="13.0" to_item="125"><point x="-428" y="26" /></edge><edge from_item="125" id="129" inscription="block@0" inscription_x="-270.0" inscription_y="59.0" to_item="128" /><edge from_item="128" id="131" inscription="[bulk, origin, guard(size == (param::divide_x() * param::divide_y()))] blocks" inscription_x="-105.0322722" inscription_y="140.195490056" to_item="130" /><edge from_item="109" id="132" inscription="mask" inscription_x="-383.734375" inscription_y="173.510416667" to_item="130"><point x="-531" y="188" /></edge><place id="102" init_string="" name="" place_type="Matrix&lt;float&gt;" radius="20" sx="0" sy="0" x="-564" y="-205"><code>	Matrix&lt;float&gt; matrix(param::width(), param::height());
 	for (unsigned int i = 0; i &lt; param::width(); i++) {
 		for (unsigned int j = 0; j &lt; param::height(); j++) {
 			matrix.set(i, j, 2.0);
@@ -49,7 +50,7 @@ namespace ca {
 	}
 	delete [] matrices;
 </code></transition><transition guard="" id="115" name="distribute" sx="70" sy="35" x="-160" y="-90" /><transition guard="" id="125" name="convolve" sx="70" sy="35" x="-303" y="27"><code>	var.block.convolve(var.mask);
-</code></transition><transition guard="" id="130" name="join" sx="70" sy="35" x="-304" y="188"><code>	unsigned int size = param::divide_x() * param::divide_y();
+</code></transition><transition guard="" id="130" name="join" sx="70" sy="35" x="-301" y="190"><code>	unsigned int size = param::divide_x() * param::divide_y();
 	Matrix&lt;float&gt; *matrices = new Matrix&lt;float&gt;[size];
 	
 	unsigned int x_overlay = var.mask.get_width() / 2;
@@ -67,7 +68,13 @@ namespace ca {
 		matrices,
 		x_overlay,
 		y_overlay);
-		
+	
+	std::ofstream outfile ("kparallel.bin", std::ios::out | std::ios::binary);
+        char *serialized_matrix = matrix.serialize();
+        outfile.write(serialized_matrix, matrix.get_size_of_serialized_data());
+        delete [] serialized_matrix;
+        outfile.close();
+        	
 	/*for (unsigned int i = 0; i &lt; param::width(); i++) {
 		for (unsigned int j = 0; j &lt; param::height(); j++) {
 			printf("%.2f ", matrix.get(i, j));
