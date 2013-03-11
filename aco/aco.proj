@@ -1,4 +1,4 @@
-<project target_env="C++"><configuration><parameter default="10" description="number of ants" name="Ants" policy="mandatory" type="Int" /><parameter default="5" description="number of generation" name="Generation" policy="mandatory" type="Int" /><build-option name="CC">g++</build-option><build-option name="LIBS" /><build-option name="CFLAGS">-O2 -I /home/sur096/projects/projects_in_kaira/ACO_new/</build-option><build-option name="OTHER_FILES">arg/utils/cTimer.cpp
+<project target_env="C++"><configuration><parameter default="10" description="number of ants" name="Ants" policy="mandatory" type="Int" /><parameter default="5" description="number of generation" name="Generation" policy="mandatory" type="Int" /><build-option name="CC">g++</build-option><build-option name="LIBS" /><build-option name="CFLAGS">-O2 -I /home/martin/projects/kaira_projects/aco</build-option><build-option name="OTHER_FILES">arg/utils/cTimer.cpp
 arg/utils/cRandom.cpp
 arg/utils/cCLParser.cpp
 arg/core/cDebuggable.cpp
