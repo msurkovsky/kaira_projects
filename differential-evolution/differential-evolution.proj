@@ -1,0 +1,71 @@
+<project target_env="C++"><configuration><parameter default="0" description="&quot;bool value&quot;" name="randomized" policy="optional" type="int" /><parameter default="10" description="size of dimension" name="dim" policy="mandatory" type="int" /><parameter default="100" description="number of populations" name="pop" policy="mandatory" type="int" /><parameter default="1000" description="count of generations" name="gen" policy="mandatory" type="int" /><parameter default="0.9" description="a mutation constant" name="F" policy="optional" type="double" /><parameter default="0.9" description="a crossover constant" name="C" policy="optional" type="double" /><parameter default="0" description="" name="max_time" policy="optional" type="int" /><parameter default="-1" description="" name="print_frequency" policy="optional" type="int" /><parameter default="ackley" description="an optimized function" name="function" policy="mandatory" type="string" /><parameter default="0" description="" name="eval" policy="mandatory" type="int" /><build-option name="CC">g++</build-option><build-option name="LIBS" /><build-option name="CFLAGS">-O2 -I /home/martin/projects/kaira_projects/differential-evolution</build-option><build-option name="OTHER_FILES">arg/utils/rng/cStandardRng.cpp
+arg/utils/rng/cRanlux.cpp
+arg/utils/cRandom.cpp
+arg/utils/cCLParser.cpp
+arg/core/cDebuggable.cpp
+arg/core/cAmphorA.cpp
+arg/algorithms/de/cParallelDE.cpp
+arg/algorithms/de/cDE.cpp
+cFunctions.cpp
+de/cFuncDE.cpp</build-option><head-code>#include &lt;string&gt;
+
+#include &lt;arg/utils/cCLParser.h&gt;
+#include &lt;arg/core/cAmphorA.h&gt;
+#include &lt;cFunctions.h&gt;
+#include &lt;de/cFuncDE.h&gt;
+
+#include &lt;arg/utils/rng/cRanlux.h&gt;
+
+const double F = 0.9;
+const double C = 0.9;</head-code></configuration><net id="101" name="Main" net-type="main"><edge from_item="102" id="105" inscription="ok" inscription_x="-204.0" inscription_y="-115.0" to_item="103" /><place id="102" init_string="" name="Init" place_type="int" radius="20" sx="0" sy="0" x="-313" y="-100"><code>	cFunctions func;
+	func.SetFunction(cFunctions::FUNC_ACKLEY);
+	
+	if (!param::randomized()) {
+		//arg::cStaticRandom::Seed(12349990);
+		unsigned int seed[] = { 1, 2, 3, 4, 5, 10, 22, 35, 7, 1, 1 };
+		
+		arg::cStaticRandom::Seed(
+			(unsigned int *) seed, 
+			(unsigned int) sizeof(seed) / sizeof(unsigned int));
+	}
+	
+	if (param::function() == "rastrigin") {
+		func.SetFunction(cFunctions::FUNC_RASTRIGIN);
+	} else if (param::function() == "dejong") {
+		func.SetFunction(cFunctions::FUNC_DEJONG);
+	} else if (param::function() == "griewank") {
+		func.SetFunction(cFunctions::FUNC_GRIEWANK);
+	} else if (param::function() == "ackley") {
+		func.SetFunction(cFunctions::FUNC_ACKLEY);
+	} else if (param::function() == "easom") {
+		func.SetFunction(cFunctions::FUNC_EASOM);
+	} else if (param::function() == "schwefel") {			
+		func.SetFunction(cFunctions::FUNC_SCHWEFEL);
+	} else if (param::function() == "rosenbrock") {
+		func.SetFunction(cFunctions::FUNC_ROSENBROCK);
+	}
+	
+	place.add(1);
+</code></place><transition guard="" id="103" name="" sx="70" sy="35" x="-148" y="-102"><code>	const int dim = param::dim();
+	
+	cFuncDE de(param::pop(), dim);
+	de.Debug(false);
+	de.MaxGenerations(param::gen());
+	de.MaxEvaluations(param::eval());
+	
+	cFunctions func;
+	
+	de.SetRange(func.RangeMin(), func.RangeMax());
+	de.PrintFrequency(param::print_frequency());
+	de.F(param::F());
+	de.C(param::C());
+	de.MaxTime(param::max_time());
+	
+	//execute
+	de.Execute();
+	
+	arg::cArrayConst&lt;double&gt; winner = de.Winner();
+	std::cout &lt;&lt; winner &lt;&lt; std::endl;
+	
+	ctx.quit();
+</code></transition><area id="104" init-expr="[0]" name="" sx="103" sy="81" x="-345" y="-138" /></net></project>
