@@ -112,6 +112,9 @@ namespace arg
 		public:
 			cDE(const unsigned int population_size, const unsigned int vector_length, const unsigned int max = 1e9);
 
+            // methods used in kaira
+            virtual void KairaExecute();
+
 			/** Perform the default DE procedure. */
 			virtual void Execute(void);
 

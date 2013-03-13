@@ -145,6 +145,118 @@ void cDE::Init()
 	m_Iteration = 0;
 }
 
+void cDE::KairaExecute() {
+
+    if (!m_Initialized) {
+        err << "Initialize must be called prior to Iterate.\n";
+    } else {
+        double C = m_C;
+		double Fj = m_F;
+
+		cArrayConst<double> u;
+		u.Resize(m_VectorLength, m_VectorLength);
+		cArrayConst<double> xi;
+		xi.Resize(m_VectorLength, m_VectorLength);
+//		PrintPopInfo(m_Iteration);
+
+        // m_AuxPopulation acts as V^t (read-only), m_Population as V^{t+1} (write-only)
+		double *tmp = m_AuxPopulation;
+		m_AuxPopulation = m_Population;
+		m_Population = tmp;
+
+		unsigned int r1, r2, r3;
+
+		if (m_MutationType == MUTATION_INVERSE && m_Iteration < m_MaxGenerations) /// 50)
+		{
+			C = 1.0 / m_Gbfit;
+		}
+
+		for (unsigned int i = 0; i < m_PopulationSize; i++)
+		{
+			//1. select vectors
+			r1 = r2 = r3 = i;
+
+			if (m_SelectionType == SELECTION_BEST)
+			{
+				r1 = m_Gbidx; //DE/best
+				Fj = Fj + 0.00001 * (m_Random->Next(1) - 0.5);
+			}
+			else
+			{
+				r1 = m_Random->NextInt(m_PopulationSize - 1); //DE/rand
+			}
+
+			r2 = m_Random->NextInt(m_PopulationSize - 1);
+			while ((r1 == r2) || (r2 == i))
+			{
+				r2 = (r2 + 1) % m_PopulationSize;
+			}
+
+			r3 = m_Random->NextInt(m_PopulationSize - 1);
+			while ((r2 == r3) || (r1 == r3) || (i == r3))
+			{
+				r3 = (r3 + 1) % m_PopulationSize;
+			}
+
+			//2. mutate
+			if (m_MutationType == MUTATION_TARGET_TO_BEST)
+			{
+				MutationTargetToBest(u, m_AuxPopulation, i, Fj, r2, r3);
+			}
+			else if (m_MutationType == MUTATION_EITHER_OR)
+    		{
+				MutationEitherOr(u, m_AuxPopulation, Fj, r1, r2, r3);
+			}
+			else
+			{
+				MutationStandard(u, m_AuxPopulation, Fj, r1, r2, r3);
+			}
+
+			// 3. crossover
+			memcpy(xi.GetArray(0), m_AuxPopulation + i * m_VectorLength, m_VectorLength * sizeof(double));
+			Crossover(xi, C, u);
+
+			CheckRange(u);
+
+			//4. trial
+			double score = ComputeFitness(u.GetArray(0), u.Count());
+			m_CurrentEvaluation++;
+			if (score < m_Fitness[i])
+			{
+				memcpy(m_Population + i * m_VectorLength, u.GetArray(0), m_VectorLength * sizeof(double));
+				m_Fitness[i] = score;
+				if (m_Gbfit > score)
+				{
+					m_Gbfit = score;
+					m_Gbidx = i;
+//					PrintPopInfo(m_Iteration);
+				}
+			}
+			else if (m_MigrationType == MIGRATION_ELITISM)
+			{
+				unsigned int minIdx;
+
+				double minScore = MinFitness(minIdx);
+
+				if (minScore < score)
+				{
+					memcpy(m_Population + minIdx * m_VectorLength, u.GetArray(0), m_VectorLength * sizeof(double));
+				}
+			}
+
+//			if (i == 0 && m_Iteration % m_PrintFrequency == 0)
+//			{
+//				PrintPopInfo(m_Iteration);
+//			}
+//
+//			if (m_MaxEvaluations > 0 && m_CurrentEvaluation >= m_MaxEvaluations)
+//			{
+//				break;
+//			}
+		}
+    }
+}
+
 bool cDE::Iterate(const unsigned int iterations)
 {
 	if (!m_Initialized)
