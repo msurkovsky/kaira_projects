@@ -17,13 +17,48 @@ de/cFuncDE.cpp</build-option><head-code>#include &lt;string&gt;
 
 #include &lt;arg/utils/rng/cRanlux.h&gt;
 
+struct Best {
+	
+	Best() {
+		id = -1;
+		length = 0;
+		vector = NULL;
+	}
+	
+	Best(int id, int length, double *vector) {
+		this-&gt;id = id;
+		this-&gt;length = length;
+		this-&gt;vector = vector;
+	}
+	
+	Best(const Best &amp;best) {
+		id = best.id;
+		length = best.length;
+		vector = new double[length];
+		memcpy(vector, best.vector, length * sizeof(double));
+	}
+	
+	Best&amp; operator=(const Best &amp;best) {
+		if (vector != NULL) {
+			delete [] vector;
+		}
+		id = best.id;
+		length = best.length;
+		vector = new double[length];
+		memcpy(vector, best.vector, length * sizeof(double));
+		
+		return *this;
+	}
+	
+	int id;
+	int length;
+	double *vector;
+};
+
 struct Island {
 
 	int id;
 	cFuncDE *de;
-};
-
-struct Best {
 };
 
 int get_next(ca::Context &amp;ctx) {
@@ -38,9 +73,28 @@ namespace ca {
 	}
 	
 	std::string token_name(const Best &amp;best) {
-		return "local best";
+		char text[12 + sizeof(int)];
+		sprintf(text, "best vector(%d)", best.id);
+		return text;
 	}
-}</head-code></configuration><net id="101" name="Main" net-type="main"><edge bidirectional="true" from_item="102" id="105" inscription="island" inscription_x="-136.0" inscription_y="-102.0" to_item="103"><point x="-163" y="-86" /></edge><edge from_item="103" id="108" inscription="c+1" inscription_x="-107.0" inscription_y="-173.0" to_item="107"><point x="-99" y="-137" /></edge><edge from_item="107" id="109" inscription="c" inscription_x="-47.0" inscription_y="-148.0" to_item="103"><point x="-45" y="-172" /></edge><edge from_item="107" id="111" inscription="c" inscription_x="13.0" inscription_y="-297.0" to_item="110"><point x="0" y="-286" /></edge><edge from_item="102" id="113" inscription="island" inscription_x="-48.0" inscription_y="-356.0" to_item="110"><point x="-231" y="-254" /><point x="-231" y="-336" /><point x="130" y="-340" /></edge><edge from_item="110" id="115" inscription="island" inscription_x="213.0" inscription_y="-302.0" to_item="114" /><edge from_item="114" id="117" inscription="island" inscription_x="308.0" inscription_y="-235.0" to_item="116" /><edge from_item="110" id="119" inscription="c" inscription_x="143.0" inscription_y="-226.0" to_item="118" /><edge from_item="118" id="120" inscription="c" inscription_x="223.0" inscription_y="-150.0" to_item="116"><point x="292" y="-135" /></edge><edge from_item="110" id="123" inscription="vec" inscription_x="183.0" inscription_y="-251.0" to_item="122" /><edge from_item="122" id="124" inscription="vec" inscription_x="225.0" inscription_y="-203.0" to_item="116" /><edge from_item="116" id="125" inscription="c + 1" inscription_x="233.0" inscription_y="-59.0" to_item="107"><point x="383" y="-89" /><point x="385" y="-47" /><point x="79" y="-47" /><point x="79" y="-215" /></edge><edge from_item="116" id="126" inscription="island" inscription_x="118.0" inscription_y="-14.0" to_item="102"><point x="431" y="-192" /><point x="432" y="-1" /><point x="-263" y="1" /><point x="-267" y="-144" /></edge><edge from_item="102" id="128" inscription="island" inscription_x="-264.0" inscription_y="-223.0" to_item="127" /><edge from_item="107" id="129" inscription="c" inscription_x="-181.0" inscription_y="-312.0" to_item="127"><point x="-73" y="-297" /><point x="-289" y="-296" /></edge><place id="102" init_string="" name="Init" place_type="Island" radius="20" sx="0" sy="0" x="-162" y="-214"><code>	cFunctions func;
+	
+	void pack(Packer &amp;packer, Best &amp;best) {
+		pack(packer, best.id);
+		pack(packer, best.length);
+		pack(packer, best.vector, best.length * sizeof(double));
+	}
+	
+	template&lt;&gt; Best unpack(Unpacker &amp;unpacker) {
+		int id = unpack&lt;int&gt;(unpacker);
+		int length = unpack&lt;int&gt;(unpacker);
+		int size = length * sizeof(double);
+		double *v = new double[length];
+		memcpy(v, unpack(unpacker, size), size);
+		//double *v = (double*) unpack(unpacker, count * sizeof(double));
+		Best best(id, length, v);
+		return best;
+	}
+}</head-code></configuration><net id="101" name="Main" net-type="main"><edge from_item="107" id="111" inscription="c" inscription_x="13.0" inscription_y="-297.0" to_item="110"><point x="0" y="-286" /></edge><edge from_item="102" id="113" inscription="island" inscription_x="-48.0" inscription_y="-356.0" to_item="110"><point x="-231" y="-254" /><point x="-231" y="-336" /><point x="130" y="-340" /></edge><edge from_item="110" id="115" inscription="island" inscription_x="213.0" inscription_y="-302.0" to_item="114" /><edge from_item="114" id="117" inscription="island" inscription_x="306.0" inscription_y="-235.0" to_item="116" /><edge from_item="110" id="123" inscription="vec@get_next(ctx)" inscription_x="191.34250261" inscription_y="-236.840760896" to_item="122" /><edge from_item="122" id="124" inscription="vec" inscription_x="207.447926183" inscription_y="-175.974694316" to_item="116" /><edge from_item="116" id="126" inscription="island" inscription_x="118.0" inscription_y="-14.0" to_item="102"><point x="431" y="-192" /><point x="432" y="-1" /><point x="-263" y="1" /><point x="-267" y="-144" /></edge><edge from_item="102" id="128" inscription="island" inscription_x="-264.0" inscription_y="-228.0" to_item="127" /><edge from_item="107" id="129" inscription="c" inscription_x="-181.0" inscription_y="-312.0" to_item="127"><point x="-73" y="-297" /><point x="-289" y="-296" /></edge><edge from_item="110" id="131" inscription="c+1" inscription_x="33.0" inscription_y="-229.0" to_item="107"><point x="95" y="-217" /></edge><edge from_item="107" id="109" inscription="c" inscription_x="-47.0" inscription_y="-148.0" to_item="103"><point x="-45" y="-172" /></edge><edge from_item="103" id="108" inscription="c+1" inscription_x="-107.0" inscription_y="-173.0" to_item="107"><point x="-99" y="-137" /></edge><edge bidirectional="true" from_item="102" id="105" inscription="island" inscription_x="-136.0" inscription_y="-102.0" to_item="103"><point x="-163" y="-86" /></edge><place id="102" init_string="" name="Init" place_type="Island" radius="20" sx="0" sy="0" x="-162" y="-214"><code>	cFunctions func;
 	func.SetFunction(cFunctions::FUNC_ACKLEY);
 	
 	if (!param::randomized()) {
@@ -86,8 +140,17 @@ namespace ca {
 	island.de-&gt;Init();
 	
 	place.add(island);
-</code></place><place id="107" init_string="[1]" name="counter" place_type="int" radius="20" sx="0" sy="0" x="-73" y="-215" /><place id="114" init_string="" name="" place_type="Island" radius="20" sx="0" sy="0" x="290" y="-286" /><place id="118" init_string="" name="" place_type="int" radius="20" sx="0" sy="0" x="132" y="-136" /><place id="122" init_string="" name="" place_type="Best" radius="20" sx="0" sy="0" x="185" y="-190" /><transition guard="c &lt;= param::gen() &amp;&amp; (c % param::gap()) != 0" id="103" name="compute" sx="70" sy="35" x="-70" y="-87"><code>	
-	
-	//execute
-	var.island.de-&gt;KairaExecute();
-</code></transition><transition guard="c % param::gap() == 0" id="110" name="send" sx="70" sy="35" x="130" y="-286" /><transition guard="" id="116" name="exchange" sx="70" sy="35" x="290" y="-191" /><transition guard="c &gt; param::gen()" id="127" name="" sx="70" sy="35" x="-383" y="-213" /><area id="104" init-expr="ca::range(0, ctx.process_count())" name="" sx="193" sy="90" x="-203" y="-249" /></net></project>
+</code></place><place id="107" init_string="[1]" name="counter" place_type="int" radius="20" sx="0" sy="0" x="-73" y="-215" /><place id="114" init_string="" name="" place_type="Island" radius="20" sx="0" sy="0" x="290" y="-286" /><place id="122" init_string="" name="" place_type="Best" radius="20" sx="0" sy="0" x="159" y="-148" /><transition guard="c % param::gap() == 0" id="110" name="send" sx="70" sy="35" x="130" y="-286"><code>	arg::cArrayConst&lt;double&gt; v = var.island.de-&gt;Winner();
+	var.vec.id = ctx.process_id();
+	var.vec.length = v.Count();
+	var.vec.vector = v.get_array();
+</code></transition><transition guard="" id="116" name="exchange" sx="70" sy="35" x="288" y="-192"><code>	
+	//var.island.de-&gt;Sort
+	/*int count = var.vec.length;
+	for (int i = 0; i &lt; count; i++) {
+		printf("%.4f ", var.vec.vector[i]);
+	}
+	printf("\n");*/
+	var.island.de-&gt;KairaIntegrateVector(var.vec.vector, var.vec.length);
+</code></transition><transition guard="c &gt; param::gen()" id="127" name="" sx="70" sy="35" x="-383" y="-213" /><transition guard="c &lt;= param::gen() &amp;&amp; (c % param::gap()) != 0" id="103" name="compute" sx="70" sy="35" x="-70" y="-87"><code>	var.island.de-&gt;KairaExecute();
+</code></transition><area id="104" init-expr="ca::range(0, ctx.process_count())" name="" sx="193" sy="90" x="-203" y="-249" /></net></project>

@@ -113,6 +113,7 @@ namespace arg
 			cDE(const unsigned int population_size, const unsigned int vector_length, const unsigned int max = 1e9);
 
             // methods used in kaira
+            virtual void KairaIntegrateVector(double *vector, int length);
             virtual void KairaExecute();
 
 			/** Perform the default DE procedure. */
