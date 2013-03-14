@@ -74,6 +74,10 @@ int get_next(ca::Context &amp;ctx) {
 	return (ctx.process_id() + 1) % ctx.process_count();
 }
 
+double traceFitness(const Island island) {
+	return island-&gt;BestFitness();
+}
+
 namespace ca {
 	std::string token_name(const Island &amp;island) {
 		return "Island";
@@ -148,7 +152,7 @@ namespace ca {
 	island-&gt;Init();
 	
 	place.add(island);
-</code></place><place id="107" init_string="[1]" name="counter" place_type="int" radius="20" sx="0" sy="0" x="-73" y="-215" /><place id="114" init_string="" name="" place_type="Island" radius="20" sx="0" sy="0" x="290" y="-286" /><place id="122" init_string="" name="" place_type="Best" radius="20" sx="0" sy="0" x="159" y="-148" /><transition guard="c % param::gap() == 0" id="110" name="send" sx="70" sy="35" x="130" y="-286"><code>	arg::cArrayConst&lt;double&gt; v = var.island-&gt;Winner();
+</code><trace name="traceFitness" return-type="double" /></place><place id="107" init_string="[1]" name="counter" place_type="int" radius="20" sx="0" sy="0" x="-73" y="-215" /><place id="114" init_string="" name="" place_type="Island" radius="20" sx="0" sy="0" x="290" y="-286" /><place id="122" init_string="" name="" place_type="Best" radius="20" sx="0" sy="0" x="159" y="-148" /><transition guard="c % param::gap() == 0" id="110" name="send" sx="70" sy="35" x="130" y="-286"><code>	arg::cArrayConst&lt;double&gt; v = var.island-&gt;Winner();
 	var.vec.id = ctx.process_id();
 	var.vec.length = v.Count();
 	double *a = new double[var.vec.length];
