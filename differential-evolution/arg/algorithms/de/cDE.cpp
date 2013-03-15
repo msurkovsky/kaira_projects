@@ -149,11 +149,14 @@ void cDE::KairaIntegrateVector(double *vector) {
     cArrayConst<t_FitnessIndexPair> population_info;
     this->SortPopulation(population_info);
 
-    int worst_vector_idx = population_info[m_PopulationSize-1].idx;
-    memcpy(&m_Population[worst_vector_idx * m_VectorLength],
-           vector, m_VectorLength*sizeof(double));
-
-    m_Fitness[worst_vector_idx] = ComputeFitness(vector, m_VectorLength);
+//    int worst_vector_idx = population_info[m_PopulationSize-1].idx;
+    int count = m_PopulationSize * 0.1; // ten percent
+    for (int i = count - 1; i > 0; i--) {
+        int worst_vector_idx = population_info[count].idx;
+        memcpy(&m_Population[worst_vector_idx * m_VectorLength],
+               vector, m_VectorLength*sizeof(double));
+        m_Fitness[worst_vector_idx] = ComputeFitness(vector, m_VectorLength);
+    }
 }
 
 void cDE::KairaExecute() {
@@ -168,7 +171,6 @@ void cDE::KairaExecute() {
 		u.Resize(m_VectorLength, m_VectorLength);
 		cArrayConst<double> xi;
 		xi.Resize(m_VectorLength, m_VectorLength);
-//		PrintPopInfo(m_Iteration);
 
         // m_AuxPopulation acts as V^t (read-only), m_Population as V^{t+1} (write-only)
 		double *tmp = m_AuxPopulation;
@@ -240,7 +242,6 @@ void cDE::KairaExecute() {
 				{
 					m_Gbfit = score;
 					m_Gbidx = i;
-//					PrintPopInfo(m_Iteration);
 				}
 			}
 			else if (m_MigrationType == MIGRATION_ELITISM)
@@ -254,16 +255,6 @@ void cDE::KairaExecute() {
 					memcpy(m_Population + minIdx * m_VectorLength, u.GetArray(0), m_VectorLength * sizeof(double));
 				}
 			}
-
-//			if (i == 0 && m_Iteration % m_PrintFrequency == 0)
-//			{
-//				PrintPopInfo(m_Iteration);
-//			}
-//
-//			if (m_MaxEvaluations > 0 && m_CurrentEvaluation >= m_MaxEvaluations)
-//			{
-//				break;
-//			}
 		}
     }
 }
