@@ -145,17 +145,28 @@ void cDE::Init()
 	m_Iteration = 0;
 }
 
-void cDE::KairaIntegrateVector(double *vector) {
+void cDE::KairaIntegrateVector(double *vector, double *fitness) {
     cArrayConst<t_FitnessIndexPair> population_info;
     this->SortPopulation(population_info);
 
-//    int worst_vector_idx = population_info[m_PopulationSize-1].idx;
-    int count = m_PopulationSize * 0.1; // ten percent
-    for (int i = count - 1; i > 0; i--) {
-        int worst_vector_idx = population_info[count].idx;
-        memcpy(&m_Population[worst_vector_idx * m_VectorLength],
-               vector, m_VectorLength*sizeof(double));
-        m_Fitness[worst_vector_idx] = ComputeFitness(vector, m_VectorLength);
+    int count = m_PopulationSize * 0.5;
+
+    int exchange_idx;
+    double *pv = vector;
+    for (int i = 0; i < count; i++) {
+        exchange_idx = population_info[m_PopulationSize-i-1].idx;
+        if (fitness[i] < m_Fitness[exchange_idx]) {
+
+            memcpy(&m_Population[exchange_idx * m_VectorLength],
+                   pv, m_VectorLength*sizeof(double));
+
+            m_Fitness[exchange_idx] = fitness[i];
+            if (m_Fitness[exchange_idx] < m_Gbfit) {
+                m_Gbfit = m_Fitness[exchange_idx];
+                m_Gbidx = exchange_idx;
+            }
+            pv += m_VectorLength;
+        }
     }
 }
 

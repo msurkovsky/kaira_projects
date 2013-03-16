@@ -107,14 +107,18 @@ namespace arg
 			double MinFitness(unsigned int & idx);
 
 			static int CompareVectors(const void*, const void*);
-			void SortPopulation(cArrayConst<t_FitnessIndexPair> &indexes);
 
 		public:
 			cDE(const unsigned int population_size, const unsigned int vector_length, const unsigned int max = 1e9);
 
+			void SortPopulation(cArrayConst<t_FitnessIndexPair> &indexes); // from protected
+
             // methods used in kaira
-            virtual void KairaIntegrateVector(double *vector);
+            virtual void KairaIntegrateVector(double *vector, double *fitness);
             virtual void KairaExecute();
+            double *KairaGetArray(unsigned int idx) {
+                return &m_Population[idx * m_VectorLength];
+            }
 
 			/** Perform the default DE procedure. */
 			virtual void Execute(void);
