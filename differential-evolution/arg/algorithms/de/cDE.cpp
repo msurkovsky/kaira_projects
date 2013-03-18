@@ -149,7 +149,7 @@ void cDE::KairaIntegrateVector(double *vector, double *fitness) {
     cArrayConst<t_FitnessIndexPair> population_info;
     this->SortPopulation(population_info);
 
-    int count = m_PopulationSize * 0.5;
+    int count = m_PopulationSize * 0.1;
 
     int exchange_idx;
     double *pv = vector;
