@@ -94,6 +94,16 @@ double traceValue(const int value) {
 	return value;
 }
 
+bool contains(const int value, const std::vector&lt;int &gt; list) {
+	int size = list.size();
+	for (int i = 0; i &lt; size; i++) {
+		if (value == list[i]) {
+			return true;
+		}
+	}
+	return false;
+}
+
 namespace ca {
 	std::string token_name(const Island &amp;island) {
 		return "Island";
@@ -120,7 +130,7 @@ namespace ca {
 		Best best(vector_length, fitness_length, v, f);
 		return best;
 	}
-}</head-code></configuration><net id="101" name="Main" net-type="main"><edge from_item="107" id="111" inscription="c" inscription_x="42.0" inscription_y="-298.0" to_item="110"><point x="0" y="-286" /></edge><edge from_item="110" id="123" inscription="vec@ to_next" inscription_x="223.0" inscription_y="-301.0" to_item="122" /><edge from_item="122" id="124" inscription="vec" inscription_x="328.0" inscription_y="-238.0" to_item="116" /><edge bidirectional="true" from_item="116" id="126" inscription="island" inscription_x="271.0" inscription_y="-34.0" to_item="102"><point x="311" y="-19" /><point x="-232" y="-17" /><point x="-233" y="-163" /></edge><edge from_item="102" id="128" inscription="island" inscription_x="-264.0" inscription_y="-228.0" to_item="127" /><edge from_item="107" id="129" inscription="c" inscription_x="-187.0" inscription_y="-310.0" to_item="127"><point x="-73" y="-297" /><point x="-289" y="-296" /></edge><edge from_item="110" id="131" inscription="c+1" inscription_x="42.0" inscription_y="-231.0" to_item="107"><point x="95" y="-217" /></edge><edge from_item="107" id="109" inscription="c" inscription_x="-47.0" inscription_y="-148.0" to_item="103"><point x="-45" y="-172" /></edge><edge from_item="103" id="108" inscription="c+1" inscription_x="-107.0" inscription_y="-173.0" to_item="107"><point x="-99" y="-137" /></edge><edge bidirectional="true" from_item="102" id="105" inscription="island" inscription_x="-136.0" inscription_y="-102.0" to_item="103"><point x="-163" y="-86" /></edge><edge from_item="127" id="134" inscription="vec@0" inscription_x="-360.0" inscription_y="-158.0" to_item="133" /><edge from_item="133" id="136" inscription="[bulk, guard(size == ctx.process_count())] vectors" inscription_x="-250.0" inscription_y="-7.0" to_item="135" /><edge bidirectional="true" from_item="110" id="140" inscription="island" inscription_x="-174.0" inscription_y="-63.0" to_item="102"><point x="133" y="-46" /><point x="-198" y="-45" /><point x="-199" y="-113" /></edge><edge bidirectional="true" from_item="142" id="145" inscription="[bulk] waited" inscription_x="170.0" inscription_y="-348.0" to_item="110" /><edge from_item="127" id="146" inscription="[multicast] ctx.process_id()@all" inscription_x="-175.0" inscription_y="-418.0" to_item="142"><point x="-384" y="-401" /></edge><edge from_item="142" id="148" inscription="[bulk] process_id" inscription_x="267.0" inscription_y="-422.0" to_item="135"><point x="380" y="-405" /><point x="386" y="36" /></edge><place id="102" init_string="" name="Init" place_type="Island" radius="20" sx="0" sy="0" x="-162" y="-214"><code>	cFunctions func;
+}</head-code></configuration><net id="101" name="Main" net-type="main"><edge from_item="107" id="111" inscription="c" inscription_x="42.0" inscription_y="-298.0" to_item="110"><point x="0" y="-286" /></edge><edge from_item="110" id="123" inscription="vec@ to_next" inscription_x="223.0" inscription_y="-301.0" to_item="122" /><edge from_item="122" id="124" inscription="vec" inscription_x="328.0" inscription_y="-238.0" to_item="116" /><edge bidirectional="true" from_item="116" id="126" inscription="island" inscription_x="271.0" inscription_y="-34.0" to_item="102"><point x="311" y="-19" /><point x="-232" y="-17" /><point x="-233" y="-163" /></edge><edge from_item="102" id="128" inscription="island" inscription_x="-264.0" inscription_y="-228.0" to_item="127" /><edge from_item="107" id="129" inscription="c" inscription_x="-187.0" inscription_y="-310.0" to_item="127"><point x="-73" y="-297" /><point x="-289" y="-296" /></edge><edge from_item="110" id="131" inscription="c+1" inscription_x="42.0" inscription_y="-231.0" to_item="107"><point x="95" y="-217" /></edge><edge from_item="107" id="109" inscription="c" inscription_x="-47.0" inscription_y="-148.0" to_item="103"><point x="-45" y="-172" /></edge><edge from_item="103" id="108" inscription="c+1" inscription_x="-107.0" inscription_y="-173.0" to_item="107"><point x="-99" y="-137" /></edge><edge bidirectional="true" from_item="102" id="105" inscription="island" inscription_x="-136.0" inscription_y="-102.0" to_item="103"><point x="-163" y="-86" /></edge><edge from_item="127" id="134" inscription="vec@0" inscription_x="-360.0" inscription_y="-158.0" to_item="133" /><edge from_item="133" id="136" inscription="[bulk, guard(size == ctx.process_count())] vectors" inscription_x="-250.0" inscription_y="-7.0" to_item="135" /><edge bidirectional="true" from_item="110" id="140" inscription="island" inscription_x="-174.0" inscription_y="-63.0" to_item="102"><point x="133" y="-46" /><point x="-198" y="-45" /><point x="-199" y="-113" /></edge><edge bidirectional="true" from_item="142" id="145" inscription="[bulk] waited" inscription_x="167.0" inscription_y="-348.0" to_item="110" /><edge from_item="127" id="146" inscription="[multicast] ctx.process_id()@all" inscription_x="-175.0" inscription_y="-418.0" to_item="142"><point x="-384" y="-401" /></edge><edge from_item="142" id="148" inscription="[bulk] process_id" inscription_x="267.0" inscription_y="-422.0" to_item="135"><point x="380" y="-405" /><point x="386" y="36" /></edge><edge from_item="110" id="150" inscription="vec@to_prev" inscription_x="223.0" inscription_y="-248.0" to_item="122"><point x="220" y="-259" /></edge><place id="102" init_string="" name="Init" place_type="Island" radius="20" sx="0" sy="0" x="-162" y="-214"><code>	cFunctions func;
 	func.SetFunction(cFunctions::FUNC_ACKLEY);
 
 	if (!param::randomized()) {
@@ -177,7 +187,7 @@ namespace ca {
 	island-&gt;Init();
 
 	place.add(island);
-</code><trace name="traceFitness" return-type="double" /></place><place id="107" init_string="[1]" name="counter" place_type="int" radius="20" sx="0" sy="0" x="-73" y="-215" /><place id="122" init_string="" name="" place_type="Best" radius="20" sx="0" sy="0" x="307" y="-286" /><place id="133" init_string="" name="" place_type="Best" radius="20" sx="0" sy="0" x="-382" y="-109" /><place id="142" init_string="" name="" place_type="int" radius="20" sx="0" sy="0" x="129" y="-404" /><transition guard="c % param::gap() == 0 &amp;&amp; ctx.process_count() &gt; 1" id="110" name="send" sx="70" sy="35" x="130" y="-286"><code>	arg::cArrayConst&lt;arg::cDE::t_FitnessIndexPair&gt; vector_info;
+</code><trace name="ca::token_name" return-type="std::string" /><trace name="traceFitness" return-type="double" /></place><place id="107" init_string="[1]" name="counter" place_type="int" radius="20" sx="0" sy="0" x="-73" y="-215"><trace name="ca::token_name" return-type="std::string" /></place><place id="122" init_string="" name="" place_type="Best" radius="20" sx="0" sy="0" x="307" y="-286"><trace name="ca::token_name" return-type="std::string" /></place><place id="133" init_string="" name="" place_type="Best" radius="20" sx="0" sy="0" x="-382" y="-109"><trace name="ca::token_name" return-type="std::string" /></place><place id="142" init_string="" name="stack" place_type="int" radius="20" sx="0" sy="0" x="129" y="-404"><trace name="ca::token_name" return-type="std::string" /></place><transition guard="c % param::gap() == 0 &amp;&amp; ctx.process_count() &gt; 1" id="110" name="send" sx="70" sy="35" x="130" y="-286"><code>	arg::cArrayConst&lt;arg::cDE::t_FitnessIndexPair&gt; vector_info;
 	var.island-&gt;SortPopulation(vector_info);
 
 	int count = param::pop() * 0.1;
@@ -198,17 +208,40 @@ namespace ca {
 	// computes where to send data
 	int i = 1;
 	int next = (ctx.process_id() + i) % ctx.process_count();
-	for (ca::Token&lt;int &gt; *t = var.waited.begin(); t != NULL; t = var.waited.next(t)) {
-		if (t-&gt;value != next) {
-			break;
-		}
-		i++;
-		next = (ctx.process_id() + i) % ctx.process_count();
-	}
 	
+	if (!var.waited.is_empty()) {
+		/*for (ca::Token&lt;int &gt; *t = var.waited.begin(); t != NULL; t = var.waited.next(t)) {
+			printf("%d, ", t-&gt;value);
+		}*/
+		//printf("\ncurrent: %d, next: %d\n", ctx.process_id(), next);
+		while (contains(next, var.waited.to_vector())) {
+			i++;
+			next = (ctx.process_id() + i) % ctx.process_count();
+			//printf("current: %d, next: %d\n", ctx.process_id(), next);
+		}
+		//printf("-&gt;&gt;current: %d, next: %d\n", ctx.process_id(), next);
+		//printf("\n");
+	}
 	var.to_next = next;
-</code></transition><transition guard="" id="116" name="exchange" sx="70" sy="35" x="309" y="-179"><code>	var.island-&gt;KairaIntegrateVector(var.vec.vector, var.vec.fitness);
-</code></transition><transition guard="c &gt; param::gen()" id="127" name="collect data" sx="70" sy="35" x="-383" y="-213"><code>	arg::cArrayConst&lt;double&gt; winner = var.island-&gt;Winner();
+	
+	i = 1;
+	int previous = (((ctx.process_id() - i) % ctx.process_count()) + ctx.process_count()) % ctx.process_count();
+	if (!var.waited.is_empty()) {
+		/*for (ca::Token&lt;int &gt; *t = var.waited.begin(); t != NULL; t = var.waited.next(t)) {
+			printf("%d, ", t-&gt;value);
+		}*/
+		//printf("\ncurrent: %d, previous: %d\n", ctx.process_id(), previous);
+		while (contains(previous, var.waited.to_vector())) {
+			i++;
+			previous = (((ctx.process_id() - i) % ctx.process_count()) + ctx.process_count()) % ctx.process_count();
+			//printf("current: %d, previous: %d\n", ctx.process_id(), previous);
+		}
+		//printf("-&gt;&gt;current: %d, previous: %d\n", ctx.process_id(), previous);
+		//printf("\n");
+	}
+	var.to_prev = previous;
+</code><trace>fire</trace></transition><transition guard="" id="116" name="exchange" sx="70" sy="35" x="309" y="-179"><code>	var.island-&gt;KairaIntegrateVector(var.vec.vector, var.vec.fitness);
+</code><trace>fire</trace></transition><transition guard="c &gt; param::gen()" id="127" name="collect data" sx="70" sy="35" x="-383" y="-213"><code>	arg::cArrayConst&lt;double&gt; winner = var.island-&gt;Winner();
 	var.vec.vector_length = winner.Count();
 	var.vec.fitness_length = 1;
 	double *v = new double[var.vec.vector_length];
@@ -225,8 +258,8 @@ namespace ca {
 
 	var.island-&gt;Finalize();
 	delete var.island;
-</code></transition><transition guard="c &lt;= param::gen() &amp;&amp; ((c % param::gap()) != 0 || ctx.process_count() == 1)" id="103" name="compute" sx="70" sy="35" x="-70" y="-87"><code>	var.island-&gt;KairaExecute();
-</code></transition><transition guard="" id="135" name="write result" sx="70" sy="35" x="-380" y="40"><code>	double *best_solution;
+</code><trace>fire</trace></transition><transition guard="c &lt;= param::gen() &amp;&amp; ((c % param::gap()) != 0 || ctx.process_count() == 1)" id="103" name="compute" sx="70" sy="35" x="-70" y="-87"><code>	var.island-&gt;KairaExecute();
+</code><trace>fire</trace></transition><transition guard="" id="135" name="write result" sx="70" sy="35" x="-380" y="40"><code>	double *best_solution;
 	double fitness = -1;
 	int length;
 	for (ca::Token&lt;Best &gt; *t = var.vectors.begin(); t != NULL; t = var.vectors.next(t)) {
@@ -254,4 +287,4 @@ namespace ca {
 	best_vector &lt;&lt; best_solution[length -1] &lt;&lt; "\n";
 	best_vector.close();*/
 	ctx.quit();
-</code></transition><area id="104" init-expr="ca::range(0, ctx.process_count())" name="" sx="193" sy="90" x="-203" y="-249" /></net></project>
+</code><trace>fire</trace></transition><area id="104" init-expr="ca::range(0, ctx.process_count())" name="" sx="193" sy="90" x="-203" y="-249" /></net></project>
