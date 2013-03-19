@@ -255,7 +255,7 @@ void cDE::KairaExecute() {
 					m_Gbidx = i;
 				}
 			}
-			else if (m_MigrationType == MIGRATION_ELITISM)
+			/*else if (m_MigrationType == MIGRATION_ELITISM)
 			{
 				unsigned int minIdx;
 
@@ -265,7 +265,7 @@ void cDE::KairaExecute() {
 				{
 					memcpy(m_Population + minIdx * m_VectorLength, u.GetArray(0), m_VectorLength * sizeof(double));
 				}
-			}
+			}*/
 		}
     }
 }
