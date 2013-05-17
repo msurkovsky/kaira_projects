@@ -1,10 +1,27 @@
 #include "cRandom.h"
+#include <stdio.h>
+#include <time.h>
+#include <stdint.h>
+#include <unistd.h>
 
 namespace arg
 {
 	void cRandom::Init()
 	{
-		srand((unsigned) time(NULL));
+//        unsigned int t = (unsigned) time(NULL);
+//        printf("rand-init: %d\n", t);
+//		srand(t);
+
+        struct timespec time;
+        if (clock_gettime(CLOCK_MONOTONIC, &time)) {
+    		perror("TraceLog::write_time");
+    		exit(-1);
+    	}
+
+    	uint64_t t = ((uint64_t) (time.tv_sec)) * 1e9;
+    	t += time.tv_nsec;
+        printf("rnd-init: %ld\n", t);
+        srand(t);
 	}
 
 	int cRandom::Next()
