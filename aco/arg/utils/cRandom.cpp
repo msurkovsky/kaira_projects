@@ -8,10 +8,6 @@ namespace arg
 {
 	void cRandom::Init()
 	{
-//        unsigned int t = (unsigned) time(NULL);
-//        printf("rand-init: %d\n", t);
-//		srand(t);
-
         struct timespec time;
         if (clock_gettime(CLOCK_MONOTONIC, &time)) {
     		perror("TraceLog::write_time");
@@ -20,7 +16,6 @@ namespace arg
 
     	uint64_t t = ((uint64_t) (time.tv_sec)) * 1e9;
     	t += time.tv_nsec;
-        printf("rnd-init: %ld\n", t);
         srand(t);
 	}
 

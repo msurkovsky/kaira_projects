@@ -9,6 +9,7 @@ cAntColony::cAntColony(cAntFactory * factory, const unsigned int ant_cnt) :
 	m_Alpha = 1;
 	m_Beta = 1;
 	m_Rho = 0.1;
+    m_BestAntIdx = 0;
 	Populate();
 }
 
