@@ -1,0 +1,19 @@
+<project library-octave="False" library-rpc="False" target_env="C++"><configuration><build-option name="LIBS" /><build-option name="CFLAGS">-O0 -g</build-option></configuration><net id="101" name="memory-leak-1"><place id="105" label-x="279" label-y="-238" name="" radius="20" sx="0" sy="0" x="279" y="-238"><place-type x="296" y="-221">int</place-type><init x="296" y="-268" /><code>	for (int i = 1; i &lt;= ctx.process_count(); i++) {
+		place.add(1);
+	}
+</code><trace trace-tokens="False" /></place><place id="103" label-x="-218" label-y="-238" name="" radius="20" sx="0" sy="0" x="-218" y="-238"><place-type x="-201" y="-221">std::vector&lt;int&gt;</place-type><init x="-201" y="-268" /><trace trace-tokens="False" /></place><place id="109" label-x="-334" label-y="-234" name="lock" radius="20" sx="0" sy="0" x="-334" y="-234"><place-type x="-317" y="-217">int</place-type><init x="-317" y="-264" /><trace trace-tokens="False" /></place><place id="114" label-x="-277" label-y="-13" name="" radius="20" sx="0" sy="0" x="-277" y="-13"><place-type x="-260" y="4">int</place-type><init x="-260" y="-43" /><trace trace-tokens="False" /></place><place id="128" label-x="-36" label-y="-13" name="" radius="20" sx="0" sy="0" x="-36" y="-13"><place-type x="-19" y="4">int</place-type><init x="-19" y="-43" /><trace trace-tokens="False" /></place><transition clock="False" collective="False" id="102" label-x="-47" label-y="-238" name="" priority="" sx="70" sy="36" x="-82" y="-256"><guard x="-82" y="-276" /><code>	var.list = std::vector&lt;int&gt;(ctx.process_count());
+	ca::Token&lt;int&gt; *t = var.data.begin();
+	int i = 0;
+	while (t != NULL) {
+		var.list[i] = t-&gt;value;
+		i++;
+		t = var.data.next(t);
+	}
+</code></transition><transition clock="False" collective="True" id="111" label-x="-277" label-y="-120" name="" priority="" sx="70" sy="36" x="-312" y="-138"><guard x="-312" y="-158" /><root x="-272" y="-98">0</root></transition><transition clock="False" collective="False" id="123" label-x="-161" label-y="-13" name="send" priority="" sx="70" sy="36" x="-196" y="-31"><guard x="-196" y="-51" /></transition><transition clock="False" collective="False" id="130" label-x="278" label-y="-13" name="quit" priority="" sx="70" sy="36" x="243" y="-31"><guard x="243" y="-51" /><code>	ca::Token&lt;int&gt; *t = var.data.begin();
+	while (t != NULL) {
+		printf("%d ", t-&gt;value);
+		t = var.data.next(t);
+	}
+	printf("\n");
+	ctx.quit();
+</code></transition><edge from_item="105" id="107" to_item="102"><inscription x="14.0" y="-255.0">[bulk, guard(size == ctx.process_count())] data</inscription></edge><edge from_item="102" id="108" to_item="103"><inscription x="-143.0" y="-255.0">list</inscription></edge><edge from_item="102" id="110" to_item="109"><inscription x="-317.0" y="-317.0">[multicast] 1 @ ca::range(1, ctx.process_count())</inscription><point x="-47" y="-298" /><point x="-332" y="-298" /></edge><edge from_item="109" id="112" to_item="111"><inscription x="-496.0" y="-177.0">[if (ctx.process_id() != 0)] lock</inscription><point x="-335" y="-119" /></edge><edge from_item="103" id="113" to_item="111"><inscription x="-206.0" y="-172.0">[root] list</inscription><point x="-217" y="-120" /></edge><edge from_item="111" id="115" to_item="114"><inscription x="-265.0" y="-65.0">[scatter] list</inscription></edge><edge from_item="114" id="124" to_item="123"><inscription x="-231.0" y="-32.0">x</inscription></edge><edge from_item="123" id="129" to_item="128"><inscription x="-103.0" y="-32.0">x@0</inscription></edge><edge from_item="128" id="131" to_item="130"><inscription x="-6.0" y="-32.0">[bulk, guard(size == ctx.process_count())] data</inscription></edge></net></project>
