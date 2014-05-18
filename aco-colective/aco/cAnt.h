@@ -60,43 +60,43 @@ class cAnt: public arg::cDebuggable
 		virtual unsigned long StartNode(void) const; 	///< Generate start node for this ant.
 
 	public:
-
-        void pack(ca::Packer &p) const {
-            p << m_GraphDim;
-            p.pack_data(m_Pheromones, m_GraphDim * m_GraphDim * sizeof(double));
-
-            p << m_Visited;
-
-            p << m_TrailLength
-              << m_DeadEnd
-              << m_Symmetric
-              << m_Position
-              << m_Alpha
-              << m_Beta
-              << m_Rho
-              << m_Power
-              << m_Fitness;
-        }
-
-        void unpack(ca::Unpacker &up) {
-            up >> m_GraphDim;
-            m_Pheromones = new double[m_GraphDim * m_GraphDim];
-            up.unpack_data(m_Pheromones, m_GraphDim * m_GraphDim * sizeof(double));
-
-            up >> m_Visited;
-
-            up >> m_TrailLength
-               >> m_DeadEnd
-               >> m_Symmetric
-               >> m_Position
-               >> m_Alpha
-               >> m_Beta
-               >> m_Rho
-               >> m_Power
-               >> m_Fitness;
-        }
-
-        cAnt() { }
+//
+//        void pack(ca::Packer &p) const {
+//            p << m_GraphDim;
+//            p.pack_data(m_Pheromones, m_GraphDim * m_GraphDim * sizeof(double));
+//
+//            p << m_Visited;
+//
+//            p << m_TrailLength
+//              << m_DeadEnd
+//              << m_Symmetric
+//              << m_Position
+//              << m_Alpha
+//              << m_Beta
+//              << m_Rho
+//              << m_Power
+//              << m_Fitness;
+//        }
+//
+//        void unpack(ca::Unpacker &up) {
+//            up >> m_GraphDim;
+//            m_Pheromones = new double[m_GraphDim * m_GraphDim];
+//            up.unpack_data(m_Pheromones, m_GraphDim * m_GraphDim * sizeof(double));
+//
+//            up >> m_Visited;
+//
+//            up >> m_TrailLength
+//               >> m_DeadEnd
+//               >> m_Symmetric
+//               >> m_Position
+//               >> m_Alpha
+//               >> m_Beta
+//               >> m_Rho
+//               >> m_Power
+//               >> m_Fitness;
+//        }
+//
+//        cAnt() { }
 
 		cAnt(double * pheromones, const unsigned int graph_dim, const unsigned int trail_length, const double power = 0);
 

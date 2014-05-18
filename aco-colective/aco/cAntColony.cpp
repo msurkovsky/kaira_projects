@@ -1,6 +1,11 @@
 
 #include "cAntColony.h"
 
+cAntColony::cAntColony() {
+    printf("Call empty constructor of cAntColony.\n");
+    cAntColony(NULL, 0);
+}
+
 cAntColony::cAntColony(cAntFactory * factory, const unsigned int ant_cnt) :
 	m_Factory(factory), m_AntCnt(ant_cnt), m_GlobalBestAnt(NULL), m_Minimize(false), m_MaxMin(0)
 {

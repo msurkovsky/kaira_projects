@@ -22,7 +22,7 @@
 #include <climits>
 
 #include "../arg/utils/cTimer.h"
-#include "../../../kaira/libs/cailie/packing.h"
+//#include "../../../kaira/libs/cailie/packing.h"
 
 #include "cAntFactory.h"
 
@@ -57,59 +57,61 @@ class cAntColony: public arg::cDebuggable
 
 	public:
 
-        void pack(ca::Packer &p) const {
-            p << m_AntCnt;
-            for (int i = 0; i < m_Antz.Count(); i++) {
-                p << *m_Antz[i];
-            }
-
-            p << *m_GlobalBestAnt;
-
-            p << m_BestAntIdx
-              << m_RoundBestBoost
-              << m_GlobalBestBoost
-              << m_BestAntFitness
-              << m_GlobalBestAntFitness
-              << m_AcoType
-              << m_Rho
-              << m_Alpha
-              << m_Beta
-              << m_Minimize
-              << m_MaxMin;
-
-            // cTimer is not packed
-        }
-
-        void unpack(ca::Unpacker &up) {
-            up >> m_AntCnt;
-            for (int i = 0; i < m_AntCnt; i++) {
-                cAnt *ant;
-                up >> *ant;
-                m_Antz.Append(ant);
-            }
-
-            up >> *m_GlobalBestAnt;
-
-            up >> m_BestAntIdx
-               >> m_RoundBestBoost
-               >> m_GlobalBestBoost
-               >> m_BestAntFitness
-               >> m_GlobalBestAntFitness
-               >> m_AcoType
-               >> m_Rho
-               >> m_Alpha
-               >> m_Beta
-               >> m_Minimize
-               >> m_MaxMin;
-
-            // cTimer is not unpacked
-        }
+//        void pack(ca::Packer &p) const {
+//            p << m_AntCnt;
+//            for (int i = 0; i < m_Antz.Count(); i++) {
+//                p << *m_Antz[i];
+//            }
+//
+//            p << *m_GlobalBestAnt;
+//
+//            p << m_BestAntIdx
+//              << m_RoundBestBoost
+//              << m_GlobalBestBoost
+//              << m_BestAntFitness
+//              << m_GlobalBestAntFitness
+//              << m_AcoType
+//              << m_Rho
+//              << m_Alpha
+//              << m_Beta
+//              << m_Minimize
+//              << m_MaxMin;
+//
+//            // cTimer is not packed
+//        }
+//
+//        void unpack(ca::Unpacker &up) {
+//            up >> m_AntCnt;
+//            for (int i = 0; i < m_AntCnt; i++) {
+//                cAnt *ant;
+//                up >> *ant;
+//                m_Antz.Append(ant);
+//            }
+//
+//            up >> *m_GlobalBestAnt;
+//
+//            up >> m_BestAntIdx
+//               >> m_RoundBestBoost
+//               >> m_GlobalBestBoost
+//               >> m_BestAntFitness
+//               >> m_GlobalBestAntFitness
+//               >> m_AcoType
+//               >> m_Rho
+//               >> m_Alpha
+//               >> m_Beta
+//               >> m_Minimize
+//               >> m_MaxMin;
+//
+//            // cTimer is not unpacked
+//        }
 
 		/** Different types of the algorithm. */
 		unsigned static int const ACO_ANT_SYSTEM = 0;
 		unsigned static int const ACO_ELITIST_ANT_SYSTEM_ROUND = 1;
 		unsigned static int const ACO_ELITIST_ANT_SYSTEM_GLOBAL = 2;
 
+        cAntColony();
+        cAntColony(const cAntColony &c);
 		cAntColony(cAntFactory* factory, const unsigned int ant_cnt);
 
 		/** Ant parameter setters. These parameters are propagated to ants. */

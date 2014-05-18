@@ -32,6 +32,14 @@ class cAntFactory : public arg::cDebuggable
 
 		cAntFactory(void);
 
+//        cAntFactory(const cAntFactory &cf) {
+//            m_GraphDim = cf.GraphDim();
+//            m_Pheromones = new double[m_GraphDim * m_GraphDim];
+//            memcpy(m_Pheromones, cf.Pheromones(), m_GraphDim * m_GraphDim * sizeof(unsigned long)); 
+//
+//            m_Power = cf.Power();
+//        }
+
 		/**
 		 * \brief This is the interface method. \ref cAntColony uses it to spawn new ants for its population.
 		 * \returns New ant (i.e. candidate solution). The individual might not have Fitness computed.
@@ -41,6 +49,8 @@ class cAntFactory : public arg::cDebuggable
 		/** Setters and getters. */
 		double * const Pheromones(void) const	{return m_Pheromones;};
 		unsigned long const GraphDim(void) const {return m_GraphDim;};
+        double Power(void) const {return m_Power;};
+
 		void const Power(const double val) {m_Power = val;};
 
 		/** Prints the pheromone matrix. */
