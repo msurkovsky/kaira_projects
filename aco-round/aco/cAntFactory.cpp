@@ -8,9 +8,9 @@ cAntFactory::cAntFactory(void) :
 
 void cAntFactory::PrintArray(const double* array, const unsigned int x, const unsigned int y) const
 {
-	for (unsigned long l = 0; l < x; l++)
+	for (unsigned int l = 0; l < x; l++)
 	{
-		for (unsigned long k = 0; k < y; k++)
+		for (unsigned int k = 0; k < y; k++)
 		{
 			std::cout << std::fixed << std::setprecision(3) << array[l * y + k] << " ";
 		}

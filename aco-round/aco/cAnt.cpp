@@ -5,6 +5,7 @@ cAnt::cAnt(double * pheromones, const unsigned int graph_dim, const unsigned int
 	m_TrailLength(trail_length), m_GraphDim(graph_dim), m_Pheromones(pheromones), m_Symmetric(true), m_Power(power)
 {
 	m_Visited.Resize(m_GraphDim);
+    m_Fitness = -1;                 // FIX: its necessary to initialize it.
 	m_Alpha = 1;
 	m_Beta = 1;
 	m_Rho = 0.1;
