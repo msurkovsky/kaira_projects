@@ -6,7 +6,7 @@ cAntFactory::cAntFactory(void) :
 {
 }
 
-void cAntFactory::PrintArray(const double* array, const unsigned int x, const unsigned int y) const
+void cAntFactory::PrintArray(const float* array, const unsigned int x, const unsigned int y) const
 {
 	for (unsigned int l = 0; l < x; l++)
 	{

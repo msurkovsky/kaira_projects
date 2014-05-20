@@ -12,17 +12,24 @@
 #ifndef CTSPANT_H_
 #define CTSPANT_H_
 
+
 #include "../cAnt.h"
+//#include "../../arg/core/cArray.h"
+#include <vector>
 
 class cTspAnt : public cAnt
 {
-		const double * m_Distances;				///< The matrix with distances between cities.
+//		const double * m_Distances;				///< The matrix with distances between cities.
 
+    const std::vector<std::pair<double, double> > &m_Cities;
 	protected:
 		virtual double APriori(const unsigned long from, const unsigned long to);
+        double GetDistance(unsigned long from, unsigned long to) const;
 
 	public:
-		cTspAnt(double * pheromones, const double * distances, const unsigned int graph_dim);
+		cTspAnt(float * pheromones,
+                const std::vector<std::pair<double, double> > &cities,
+                const unsigned int graph_dim);
 		virtual double ComputeFitness(void);
 
 		/** A method for tests. It can be used e.g. to verify found solutions. */

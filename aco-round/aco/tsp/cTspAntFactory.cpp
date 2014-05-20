@@ -2,46 +2,48 @@
 
 using namespace std;
 
-cTspAntFactory::cTspAntFactory(const char * fname) :
-	m_Distances(NULL)
+cTspAntFactory::cTspAntFactory(const char * fname)
+//	m_Distances(NULL)
 {
 	ifstream in(fname);
 
 	if (in.is_open())
 	{
 		in >> m_GraphDim;
-		arg::cArrayConst<t_Pair> cities;
-		t_Pair city;
+//		t_Pair city;
 		for (unsigned int i = 0; i < m_GraphDim; i++)
 		{
+            std::pair<double, double> city;
 			unsigned int id;
 			in >> id; //ignored
-			in >> city.x;
-			in >> city.y;
-			cities.Append(city);
+			in >> city.first;
+			in >> city.second;
+			m_Cities.push_back(city);
 		}
 
-		m_Distances = new double[m_GraphDim * m_GraphDim];
-		m_Pheromones = new double[m_GraphDim * m_GraphDim];
+
+//		m_Distances = new double[m_GraphDim * m_GraphDim];
+		m_Pheromones = new float[m_GraphDim * m_GraphDim];
 
 		for (unsigned int i = 0; i < m_GraphDim; i++)
 		{
-			const t_Pair & city_i = cities[i];
+//			const t_Pair & city_i = cities[i];
+			const std::pair<double, double> &city = m_Cities[i];
 
 			for (unsigned int j = 0; j < m_GraphDim; j++)
 			{
 				if (i == j)
 				{
 					m_Pheromones[i * m_GraphDim + j] = 0;
-					m_Distances[i * m_GraphDim + j] = 0;
+//					m_Distances[i * m_GraphDim + j] = 0;
 				}
 				else
 				{
-					const t_Pair & city_j = cities[j];
-					const double dist_ij = sqrt((city_i.x - city_j.x) * (city_i.x - city_j.x) + (city_i.y - city_j.y)
-							* (city_i.y - city_j.y));
 					m_Pheromones[i * m_GraphDim + j] = 0.1;
-					m_Distances[i * m_GraphDim + j] = dist_ij;
+//					const t_Pair & city_j = cities[j];
+//					const double dist_ij = sqrt((city_i.first - city_j.first) * (city_i.first - city_j.first) + (city_i.second - city_j.second)
+//							* (city_i.second - city_j.second));
+//					m_Distances[i * m_GraphDim + j] = dist_ij;
 				}
 			}
 		}
@@ -54,19 +56,20 @@ cTspAntFactory::cTspAntFactory(const char * fname) :
 
 void cTspAntFactory::PrintDistances(void) const
 {
-	PrintArray(m_Distances, m_GraphDim, m_GraphDim);
+    printf("Print of distances is disabled.\n");
+//	PrintArray(m_Distances, m_GraphDim, m_GraphDim);
 }
 
 cAnt * cTspAntFactory::GetInstance(void)
 {
-	return Configure(new cTspAnt(m_Pheromones, m_Distances, m_GraphDim));
+	return Configure(new cTspAnt(m_Pheromones, m_Cities, m_GraphDim));
 }
 
 cTspAntFactory::~cTspAntFactory()
 {
-	if (m_Distances != NULL)
-	{
-		delete[] m_Distances;
-	}
+//	if (m_Distances != NULL)
+//	{
+//		delete[] m_Distances;
+//	}
 }
 

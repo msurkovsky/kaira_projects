@@ -22,6 +22,7 @@
 #ifndef __CANT_H__
 #define __CANT_H__
 
+#include <vector>
 #include "../arg/core/cArray.h"
 #include "../arg/core/cDebuggable.h"
 
@@ -35,7 +36,7 @@ class cAnt: public arg::cDebuggable
 		bool m_DeadEnd;									///< Dead end- whether or not is this ant in a dead end.
 
 		unsigned long m_GraphDim;						///< Graph dimension. The size of m_Pheromones must be m_GraphDim^2.
-		double* m_Pheromones; 							///< The shared pheromone matrix used and updated by each ant.
+		float* m_Pheromones; 							///< The shared pheromone matrix used and updated by each ant.
 		arg::cArrayConst<bool> m_Visited;				///< Bitmap of visited nodes for quick check.
 		bool m_Symmetric;								///< Shall be the pheromone matrix updated in a symmetric manner?
 
@@ -49,8 +50,9 @@ class cAnt: public arg::cDebuggable
 		long NextPosition(void);						///< Compute node to move to
 		void ClearVisited(void);						///< Clears array of visited nodes (i.e. the ant can move to any connected node).
 
-		arg::cArrayConst<unsigned long> m_Trail;		///< The memory of ants' steps. Visited nodes in chronological order.
+//		arg::cArrayConst<unsigned long> m_Trail;		///< The memory of ants' steps. Visited nodes in chronological order.
 
+        std::vector<unsigned long> m_Trail;
 	protected:
 
 		double m_Fitness;								///< The fitness of the solution represented by this ants travel.
@@ -60,7 +62,7 @@ class cAnt: public arg::cDebuggable
 
 	public:
 
-		cAnt(double * pheromones, const unsigned int graph_dim, const unsigned int trail_length, const double power = 0);
+		cAnt(float * pheromones, const unsigned int graph_dim, const unsigned int trail_length, const double power = 0);
 
 		void PlacePheromones(const double normalize_pheromones = 0, const bool minimize = false); 	///< Update the pheromone matrix.
 		void GoForward(void);																		///< Run there
@@ -75,7 +77,7 @@ class cAnt: public arg::cDebuggable
 		unsigned int const GraphDim(void) const { return m_GraphDim;};
 		unsigned int const TrailLength(void) const { return m_TrailLength;};
 
-		const arg::cArrayConst<unsigned long> & Trail(void) const {return m_Trail;};				///< Read only access to the trail of this ant.
+		const std::vector<unsigned long> & Trail(void) const {return m_Trail;};				///< Read only access to the trail of this ant.
 		void SetTrail(const unsigned long *trail);
 
 		virtual double ComputeFitness(void) = 0; 													///< Compute fitness corresponding to the ant trail.
@@ -84,7 +86,7 @@ class cAnt: public arg::cDebuggable
 
 inline void cAnt::Print(void) const
 {
-	std::cout << m_Trail << std::endl;
+//	std::cout << m_Trail << std::endl;
 }
 
 #endif

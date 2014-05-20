@@ -11,7 +11,7 @@
 
 #include <fstream>
 
-#include "../../arg/core/cArray.h"
+#include <vector>
 
 #include "../cAntFactory.h"
 
@@ -25,7 +25,9 @@ class cTspAntFactory: public cAntFactory
 				double y;
 		} t_Pair;
 
-		double * m_Distances;
+        std::vector<std::pair<double, double> > m_Cities;
+
+//		double * m_Distances;
 
 	public:
 		cTspAntFactory(const char * fname);

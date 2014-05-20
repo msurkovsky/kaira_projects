@@ -1,7 +1,7 @@
 
 #include "cAnt.h"
 
-cAnt::cAnt(double * pheromones, const unsigned int graph_dim, const unsigned int trail_length, const double power) :
+cAnt::cAnt(float * pheromones, const unsigned int graph_dim, const unsigned int trail_length, const double power) :
 	m_TrailLength(trail_length), m_GraphDim(graph_dim), m_Pheromones(pheromones), m_Symmetric(true), m_Power(power)
 {
 	m_Visited.Resize(m_GraphDim);
@@ -29,16 +29,18 @@ void cAnt::GoForward()
 	dbg	<< "Starting trail of " << m_TrailLength << " steps on graph with " << m_GraphDim << " nodes.\n";
 	ClearVisited();
 	m_DeadEnd = false;
-	m_Trail.Clear();
+//	m_Trail.Clear();
+	m_Trail.clear();
 	m_Fitness = 0;
 	m_Position = StartNode();
 	for (unsigned int i = 0; i < m_TrailLength && !m_DeadEnd; i++)
 	{
 		StepForward();
 	}
-	m_Trail.Append(m_Position);
+//	m_Trail.Append(m_Position);
+	m_Trail.push_back(m_Position);
 
-	dbg	<< "This ant went " << m_Trail << "\n";
+//	dbg	<< "This ant went " << m_Trail << "\n";
 }
 
 long cAnt::NextPosition(void)
@@ -131,14 +133,15 @@ long cAnt::NextPosition(void)
 void cAnt::StepForward()
 {
 	dbg	<< "Current position " << m_Position << ".\n";
-	m_Trail.Append(m_Position);
+//	m_Trail.Append(m_Position);
+	m_Trail.push_back(m_Position);
 	m_Visited[m_Position] = true;
 	m_Position = NextPosition();
 }
 
 void cAnt::PlacePheromones(const double normalize_pheromones, const bool minimize)
 {
-	unsigned int n = m_Trail.Count();
+//	unsigned int n = m_Trail.Count();
 
 	dbg	<< "Final loot is " << m_Fitness << ".\n";
 
@@ -174,12 +177,13 @@ void cAnt::PlacePheromones(const double normalize_pheromones, const bool minimiz
 	dbg	<< this << " DeltaTij is " << deltaTij << ".\n";
 
 	//2. place pheromones
-	dbg	<< "This ant has trail: " << m_Trail << ".\n";
+//	dbg	<< "This ant has trail: " << m_Trail << ".\n";
 
-	for (unsigned int i = 0; i < n - 1; i++)
+    size_t n = m_Trail.size();
+	for (size_t i = 0; n != 0 && i < n - 1; i++)
 	{
-		unsigned long x = m_Trail[i];
-		unsigned long y = m_Trail[i + 1];
+        unsigned long x = m_Trail.at(i);
+        unsigned long y = m_Trail.at(i + 1);
 
 		m_Pheromones[x * m_GraphDim + y] += deltaTij;
 		if (m_Symmetric)
@@ -190,7 +194,8 @@ void cAnt::PlacePheromones(const double normalize_pheromones, const bool minimiz
 }
 
 void cAnt::SetTrail(const unsigned long *trail) {
-	for(unsigned int i = 0 ; i < m_Trail.Count() ; i++){
+//	for(unsigned int i = 0 ; i < m_Trail.Count() ; i++){
+	for(unsigned int i = 0 ; i < m_Trail.size() ; i++){
 		m_Trail[i] = trail[i];
 	}
 	ComputeFitness();

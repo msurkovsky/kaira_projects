@@ -95,7 +95,7 @@ void cAntColony::PlacePheromones(void)
 
 void cAntColony::Evaporate(void)
 {
-	double * pheromones = m_Factory->Pheromones();
+	float * pheromones = m_Factory->Pheromones();
 	for (unsigned int i = 0; i < m_Factory->GraphDim() * m_Factory->GraphDim(); i++)
 	{
 		double before = pheromones[i];
@@ -120,7 +120,7 @@ void cAntColony::Evaporate(void)
 
 cAnt * cAntColony::Execute(const unsigned int limit)
 {
-	m_GlobalBestAntFitness = m_Minimize ? INT_MAX : 0;
+	m_GlobalBestAntFitness = m_Minimize ? ULLONG_MAX : 0;
 	std::cout << "Round\ttime[ms]\tbest_fitness\n";
 
 	arg::cTimer timer;
@@ -152,7 +152,7 @@ cAnt * cAntColony::Execute(const unsigned int limit)
 	}
 	std::cout << m_GlobalBestAnt->Fitness() << "\n";
 	std::cout << "\nBest found trail:\n";
-	std::cout << m_GlobalBestAnt->Trail() << std::endl;
+//	std::cout << m_GlobalBestAnt->Trail() << std::endl;
 	std::cout << "Best ant :\n";
 	m_GlobalBestAnt->Print();
 	return m_GlobalBestAnt;
@@ -160,7 +160,7 @@ cAnt * cAntColony::Execute(const unsigned int limit)
 
 void cAntColony::StartExecution(void)
 {
-	m_GlobalBestAntFitness = m_Minimize ? INT_MAX : 0;
+	m_GlobalBestAntFitness = m_Minimize ? ULLONG_MAX : 0;
 	//std::cout << "Round\ttime[ms]\tbest_fitness\n";
 
 	//timer.CpuStart();
@@ -195,7 +195,7 @@ cAnt* cAntColony::EndExecution(void)
 {
 	std::cout << m_GlobalBestAnt->Fitness() << "\n";
 	std::cout << "\nBest found trail:\n";
-	std::cout << m_GlobalBestAnt->Trail() << std::endl;
+//	std::cout << m_GlobalBestAnt->Trail() << std::endl;
 	std::cout << "Best ant :\n";
 	m_GlobalBestAnt->Print();
 	return m_GlobalBestAnt;

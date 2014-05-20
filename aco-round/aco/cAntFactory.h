@@ -18,12 +18,12 @@
 class cAntFactory : public arg::cDebuggable
 {
 	protected:
-		double * m_Pheromones;				///< Pheromone array shared among the ants. Managed by this object.
+		float * m_Pheromones;				///< Pheromone array shared among the ants. Managed by this object.
 		unsigned long m_GraphDim;			///< The dimension of the graph. Pheromone array has the length m_GraphDim^2
 		double m_Power;						///< Optional argument for the 'power rule'. Propagated to the ants when they are created.
 
 		/** Utility method to print an array of double. */
-		void PrintArray(const double* array, const unsigned int x, const unsigned int y) const;
+		void PrintArray(const float* array, const unsigned int x, const unsigned int y) const;
 
 		/** Default configuration of new ants. Sets Debug() if the factory is in debug mode and propagates m_Power to the ant. */
 		virtual cAnt* Configure(cAnt * ant) const;
@@ -39,7 +39,7 @@ class cAntFactory : public arg::cDebuggable
 		virtual cAnt * GetInstance(void) = 0;
 
 		/** Setters and getters. */
-		double * const Pheromones(void) const	{return m_Pheromones;};
+		float * const Pheromones(void) const	{return m_Pheromones;};
 		unsigned long const GraphDim(void) const {return m_GraphDim;};
         double Power(void) const {return m_Power;};
 
