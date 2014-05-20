@@ -77,7 +77,7 @@ class cAnt: public arg::cDebuggable
 		unsigned int const GraphDim(void) const { return m_GraphDim;};
 		unsigned int const TrailLength(void) const { return m_TrailLength;};
 
-		const std::vector<unsigned long> & Trail(void) const {return m_Trail;};				///< Read only access to the trail of this ant.
+		const std::vector<unsigned long>& Trail(void) const {return m_Trail;};				///< Read only access to the trail of this ant.
 		void SetTrail(const unsigned long *trail);
 
 		virtual double ComputeFitness(void) = 0; 													///< Compute fitness corresponding to the ant trail.

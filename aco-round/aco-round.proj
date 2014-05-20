@@ -6,7 +6,7 @@ aco/cAnt.cpp
 aco/cAntColony.cpp
 aco/cAntFactory.cpp
 aco/tsp/cTspAnt.cpp
-aco/tsp/cTspAntFactory.cpp</build-option><build-option name="CFLAGS">-O2 -I /home/martin/projects/kaira_projects/aco-colective</build-option><head-code>#include "arg/utils/cRandom.h"
+aco/tsp/cTspAntFactory.cpp</build-option><build-option name="CFLAGS">-O2 -I /home/martin/projects/kaira_projects/aco-round</build-option><head-code>#include "arg/utils/cRandom.h"
 #include "arg/utils/cCLParser.h"
 
 #include "aco/cAntColony.h"
@@ -14,52 +14,6 @@ aco/tsp/cTspAntFactory.cpp</build-option><build-option name="CFLAGS">-O2 -I /hom
 
 #include &lt;string&gt;
 #include &lt;sstream&gt;
-
-template&lt;class A, class B&gt;
-class Couple {
-
-	A first;
-	B second;
-	
-	public:
-		Couple&lt;A, B&gt; () { }
-		Couple&lt;A, B&gt; (A first, B second) : first(first), second(second) { }
-		
-		Couple&lt;A, B&gt; (const Couple&lt;A, B&gt; &amp;t) {
-			first = t.get_first();
-			second = t.get_second();
-		}
-		
-		Couple&lt;A, B&gt;&amp; operator= (const Couple&lt;A, B&gt; &amp;t) {
-			if (this != &amp;t) {
-				first = t.get_first();
-				second = t.get_second();
-			}
-			return *this;
-		}
-		
-		std::string token_name() const {
-			std::stringstream ss;
-			ss &lt;&lt; "(" &lt;&lt; first &lt;&lt; ", " &lt;&lt; second &lt;&lt; ")";
-			return ss.str();
-		}
-		
-		void pack(ca::Packer &amp;p) const {
-			p &lt;&lt; first &lt;&lt; second;
-		}
-		
-		void unpack(ca::Unpacker &amp;up) {
-			up &gt;&gt; first &gt;&gt; second;
-		}
-		
-		A get_first() const {
-			return first;
-		}
-		
-		B get_second() const {
-			return second;
-		}
-};
 
 struct AntColony {	
 	cAntColony *colony;
@@ -224,84 +178,4 @@ double traceCost(Trail &amp;t) {
 	}
 </code></transition><transition clock="False" collective="True" id="375" label-x="381" label-y="537" name="Send&#10;result" priority="" sx="70" sy="36" x="346" y="519"><guard x="346" y="499" /><root x="367" y="560">0</root></transition><edge from_item="105" id="314" to_item="112"><inscription x="244.0" y="378.0">param::Generation()</inscription></edge><edge from_item="103" id="335" to_item="112"><inscription x="156.0" y="277.0">colony</inscription><point x="150" y="222" /><point x="150" y="438" /></edge><edge from_item="105" id="213" to_item="135"><inscription x="305.0" y="282.0">gen</inscription><point x="230" y="299" /></edge><edge bidirectional="true" from_item="135" id="139" to_item="103"><inscription x="269.0" y="205.0">colony</inscription><point x="309" y="221" /></edge><edge from_item="148" id="150" to_item="147"><inscription x="595.0" y="518.0">bests</inscription></edge><edge from_item="152" id="174" to_item="112"><inscription x="342.0" y="417.0">best</inscription></edge><edge bidirectional="true" from_item="135" id="334" to_item="152"><inscription x="401.0" y="365.0">best</inscription></edge><edge from_item="135" id="339" to_item="338"><inscription x="471.0" y="345.0">[if (sent_best.cost &gt;= 0)]
 sent_best @ (ctx.process_id() + 1) %
-                     ctx.process_count()</inscription><point x="470" y="383" /></edge><edge from_item="338" id="340" to_item="135"><inscription x="543.0" y="281.0">[bulk] neighbor_best</inscription><point x="698" y="297" /></edge><edge from_item="112" id="374" to_item="373"><inscription x="251.0" y="477.0">best</inscription></edge><edge from_item="373" id="376" to_item="375"><inscription x="289.0" y="519.0">best</inscription></edge><edge from_item="375" id="377" to_item="148"><inscription x="443.0" y="518.0">[gather] best</inscription></edge><edge from_item="135" id="415" to_item="105"><inscription x="304.249874515" y="323.697458052">gen + 1</inscription><point x="379.5" y="341.5" /></edge></net><net id="379" name="Main_copy"><area id="380" sx="627" sy="311" x="138" y="181"><init x="138" y="166">ca::range(0, ctx.process_count())</init></area><place id="381" label-x="230" label-y="222" name="" radius="21" sx="0" sy="0" x="230" y="222"><place-type x="247" y="239">AntColony</place-type><init x="247" y="192" /><code>	
-	arg::cRandom::Init();
-	
-	const bool debug = false;//cl.Boolean("d") || cl.Boolean("-debug");
-	const bool minimize = true;//cl.Boolean("minimize");
-	const bool verbose = true;//cl.Boolean("v");
-	const unsigned int gen = param::Generation();//cl.Integer("gen", 10);
-
-	cTspAntFactory *factory = new cTspAntFactory("eil51.tsp");
-
-	factory-&gt;Debug(debug);
-	factory-&gt;Power(0);
-
-	cAntColony *aco = new cAntColony(factory, param::Ants());
-	aco-&gt;Rho(0.01);
-	aco-&gt;Alpha(1);
-	aco-&gt;Beta(1);
-	aco-&gt;RoundBestBoost(1);
-	aco-&gt;GlobalBestBoost(10);
-	aco-&gt;MaxMin(0);
-	aco-&gt;Minimize(minimize);
-	aco-&gt;AcoType(cAntColony::ACO_ELITIST_ANT_SYSTEM_GLOBAL | cAntColony::ACO_ELITIST_ANT_SYSTEM_ROUND);
-	aco-&gt;Debug(debug);
-	aco-&gt;StartExecution();
-	place.add(AntColony(aco));
-</code><trace trace-tokens="False" /></place><place id="382" label-x="224" label-y="342" name="Counter" radius="22" sx="17" sy="0" x="224" y="342"><place-type x="258" y="361">int</place-type><init x="257" y="311">[0]</init><trace trace-tokens="False" /></place><place id="383" label-x="552" label-y="537" name="" radius="21" sx="0" sy="0" x="552" y="537"><place-type x="569" y="554">std::vector&lt;Trail&gt;</place-type><init x="569" y="507" /><trace trace-tokens="False" /></place><place id="384" label-x="462" label-y="410" name="Best trail" radius="21" sx="21" sy="0" x="428" y="435"><place-type x="468" y="452">Trail</place-type><init x="445" y="405" /><code>	Trail t(NULL, 0, -1);
-	place.add(t);
-</code><trace trace-tokens="True"><function name="traceCost" return-type="double" /></trace></place><place id="385" label-x="438" label-y="98" name="" radius="20" sx="0" sy="0" x="438" y="98"><place-type x="455" y="115">Couple&lt;int, int&gt;</place-type><init x="455" y="68" /><trace trace-tokens="False" /></place><place id="386" label-x="145" label-y="98" name="" radius="20" sx="0" sy="0" x="145" y="98"><place-type x="162" y="115">std::vector&lt;int&gt;</place-type><init x="162" y="68" /><trace trace-tokens="False" /></place><place id="387" label-x="163" label-y="-1" name="lock for&#10;non root" radius="20" sx="18" sy="10" x="163" y="-1"><place-type x="198" y="25">int</place-type><init x="180" y="-31" /><trace trace-tokens="False" /></place><place id="388" label-x="669" label-y="384" name="Ant distribution" radius="20" sx="56" sy="0" x="669" y="384"><place-type x="727" y="405">Trail</place-type><init x="686" y="354" /><trace trace-tokens="False" /></place><place id="389" label-x="236" label-y="537" name="" radius="20" sx="0" sy="0" x="236" y="537"><place-type x="253" y="554">Trail</place-type><init x="253" y="507" /><trace trace-tokens="False" /></place><transition clock="False" collective="False" id="390" label-x="227" label-y="434" name="Free colonies" priority="" sx="86" sy="42" x="192" y="416"><guard x="192" y="396" /><code>	delete var.colony.colony;
-</code></transition><transition clock="False" collective="False" id="391" label-x="761" label-y="553" name="Write result" priority="" sx="94" sy="40" x="662" y="516"><guard x="662" y="496" /><code>	Trail bestTrail = var.bests[0];
-
-	for (int i = 1; i &lt; var.bests.size(); i++) {
-		if (bestTrail.cost &gt; var.bests[i].cost) {
-			bestTrail = var.bests[i];
-		}
-	}
-	
-	printf("The best trail with length %5.2f is through cities [", bestTrail.cost);
-	for(unsigned int i = 0 ; i &lt; bestTrail.length - 1 ; i++){
-		printf(" %ld,", bestTrail[i]);
-	}
-	printf(" %ld ]\n", bestTrail[bestTrail.length - 1]);
-
-	ctx.quit();
-</code></transition><transition clock="False" collective="False" id="392" label-x="432" label-y="294" name="Compute" priority="" sx="82" sy="42" x="397" y="276"><guard x="415" y="260">gen &lt; param::Generation()</guard><code>	ca::Token&lt;Trail&gt; *t = var.neighbor_best.begin();
-	while (t != NULL) {
-		if (t-&gt;value.cost &lt; var.best.cost || var.best.cost == -1) {
-			// better neighbore
-			var.best = t-&gt;value;
-		}
-		t = var.neighbor_best.next(t);
-	}
-	
-	if (var.best.cost != -1 &amp;&amp; var.best.cost &lt; var.colony.colony-&gt;BestAntPtr(false)-&gt;Fitness()) {
-		// set better trail to colony
-		var.colony.colony-&gt;SetBestAntTrail(var.best.array, var.best.cost);
-	}
-	
-	// new execution of colony
-	var.colony.colony-&gt;Execution();
-	
-	// is it new result better?
-	double fitness = var.colony.colony-&gt;BestAntPtr(true)-&gt;Fitness();
-	if (fitness &lt; var.best.cost || var.best.cost == -1) {
-		const std::vector&lt;unsigned long&gt; &amp;trailAnt = var.colony.colony-&gt;BestAntPtr(false)-&gt;Trail();
-		var.best = Trail(&amp;trailAnt[0], trailAnt.size(), fitness);
-		
-		// send copy
-		var.sent_best = var.best;
-	}
-</code></transition><transition clock="False" collective="False" id="393" label-x="299" label-y="94" name="counters&#10;-&gt;&#10;data" priority="" sx="80" sy="44" x="264" y="76"><guard x="264" y="56" /><code>	var.data = std::vector&lt;int&gt;(ctx.process_count());
-	ca::Token&lt;Couple&lt;int, int&gt; &gt; *c = var.counters.begin();
-	while (c != NULL) {
-		Couple&lt;int, int&gt; &amp;couple = c-&gt;value;
-		var.data[couple.get_second()] = couple.get_first();
-		c = var.counters.next(c);
-	}
-</code></transition><transition clock="False" collective="True" id="394" label-x="381" label-y="537" name="Send&#10;result" priority="" sx="70" sy="36" x="346" y="519"><guard x="346" y="499" /><root x="367" y="560">0</root></transition><transition clock="False" collective="True" id="395" label-x="59" label-y="199" name="Distribute&#10;counters" priority="" sx="70" sy="36" x="24" y="181"><guard x="24" y="161" /><root x="15" y="226">0</root></transition><edge from_item="382" id="396" to_item="390"><inscription x="244.0" y="378.0">param::Generation()</inscription></edge><edge from_item="381" id="397" to_item="390"><inscription x="155.0" y="264.0">colony</inscription><point x="150" y="222" /><point x="150" y="438" /></edge><edge from_item="382" id="398" to_item="392"><inscription x="264.0" y="282.0">[svar(process)] gen</inscription><point x="230" y="299" /></edge><edge bidirectional="true" from_item="392" id="399" to_item="381"><inscription x="269.0" y="205.0">colony</inscription><point x="309" y="221" /></edge><edge from_item="383" id="400" to_item="391"><inscription x="595.0" y="518.0">bests</inscription></edge><edge from_item="384" id="401" to_item="390"><inscription x="342.0" y="417.0">best</inscription></edge><edge bidirectional="true" from_item="392" id="402" to_item="384"><inscription x="401.0" y="365.0">best</inscription></edge><edge from_item="392" id="403" to_item="385"><inscription x="446.0" y="189.0">Couple&lt;int, int&gt;(gen+1, process) @ 0</inscription></edge><edge from_item="385" id="404" to_item="393"><inscription x="356.0" y="52.0">[bulk,
- guard(size == ctx.process_count())]
-counters</inscription></edge><edge from_item="393" id="405" to_item="386"><inscription x="204.0" y="82.0">data</inscription></edge><edge from_item="393" id="406" to_item="387"><inscription x="215.0" y="-16.0">[multicast] 1 @ ca::range(1, ctx.process_count())</inscription><point x="304" y="4" /></edge><edge from_item="392" id="407" to_item="388"><inscription x="471.0" y="345.0">[if (sent_best.cost &gt;= 0)]
-sent_best @ (ctx.process_id() + 1) %
-                     ctx.process_count()</inscription><point x="470" y="383" /></edge><edge from_item="388" id="408" to_item="392"><inscription x="543.0" y="281.0">[bulk] neighbor_best</inscription><point x="698" y="297" /></edge><edge from_item="390" id="409" to_item="389"><inscription x="251.0" y="477.0">best</inscription></edge><edge from_item="389" id="410" to_item="394"><inscription x="289.0" y="519.0">best</inscription></edge><edge from_item="394" id="411" to_item="383"><inscription x="443.0" y="518.0">[gather] best</inscription></edge><edge from_item="386" id="412" to_item="395"><inscription x="65.0" y="139.0">[root] data</inscription><point x="58" y="97" /></edge><edge from_item="387" id="413" to_item="395"><inscription x="-16" y="-16">[if (ctx.process_id() != 0)] lock</inscription><point x="-7" y="4" /><point x="-5" y="201" /></edge><edge from_item="395" id="414" to_item="382"><inscription x="63.0" y="271.0">[scatter] data</inscription><point x="59" y="343" /></edge></net></project>
+                     ctx.process_count()</inscription><point x="470" y="383" /></edge><edge from_item="338" id="340" to_item="135"><inscription x="543.0" y="281.0">[bulk] neighbor_best</inscription><point x="698" y="297" /></edge><edge from_item="112" id="374" to_item="373"><inscription x="251.0" y="477.0">best</inscription></edge><edge from_item="373" id="376" to_item="375"><inscription x="289.0" y="519.0">best</inscription></edge><edge from_item="375" id="377" to_item="148"><inscription x="443.0" y="518.0">[gather] best</inscription></edge><edge from_item="135" id="415" to_item="105"><inscription x="304.0" y="323.0">gen + 1</inscription><point x="379" y="341" /></edge></net></project>
