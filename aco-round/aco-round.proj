@@ -1,4 +1,4 @@
-<project library-octave="True" library-rpc="False" target_env="C++"><configuration><parameter default="10" description="number of ants" name="Ants" policy="mandatory" type="int" /><parameter default="5" description="number of generation" name="Generation" policy="mandatory" type="int" /><build-option name="LIBS" /><build-option name="OTHER_FILES">arg/utils/cTimer.cpp
+<project library-octave="True" library-rpc="False" target_env="C++"><configuration><parameter default="10" description="number of ants" name="Ants" policy="mandatory" type="int" /><parameter default="5" description="number of generation" name="Generation" policy="mandatory" type="int" /><parameter default="&quot;eil51.tsp&quot;" description="" name="File" policy="mandatory" type="std::string" /><parameter default="-1" description="" name="Stop" policy="mandatory" type="double" /><build-option name="LIBS" /><build-option name="OTHER_FILES">arg/utils/cTimer.cpp
 arg/utils/cRandom.cpp
 arg/utils/cCLParser.cpp
 arg/core/cDebuggable.cpp
@@ -160,17 +160,38 @@ double traceCost(Trail &amp;t) {
 	const bool verbose = true;//cl.Boolean("v");
 	const unsigned int gen = param::Generation();//cl.Integer("gen", 10);
 
-	cTspAntFactory *factory = new cTspAntFactory("usa13509.tsp");
+//	cTspAntFactory *factory = new cTspAntFactory("usa13509.tsp");
+	cTspAntFactory *factory = new cTspAntFactory(param::File().c_str());
 
 	factory-&gt;Debug(debug);
 	factory-&gt;Power(0);
 
 	cAntColony *aco = new cAntColony(factory, param::Ants());
-	aco-&gt;Rho(0.01);
-	aco-&gt;Alpha(1);
-	aco-&gt;Beta(1);
-	aco-&gt;RoundBestBoost(1);
-	aco-&gt;GlobalBestBoost(10);
+	//if (ctx.process_id() == 0) {
+		aco-&gt;Rho(0.01);
+		aco-&gt;Alpha(1);
+		aco-&gt;Beta(1);
+		aco-&gt;RoundBestBoost(1);
+		aco-&gt;GlobalBestBoost(10);
+	/*} else if (ctx.process_id() == 1) {
+		aco-&gt;Rho(0.02);
+		aco-&gt;Alpha(1);
+		aco-&gt;Beta(1);
+		aco-&gt;RoundBestBoost(1);
+		aco-&gt;GlobalBestBoost(10);
+	} else if (ctx.process_id() == 2) {
+		aco-&gt;Rho(0.05);
+		aco-&gt;Alpha(1);
+		aco-&gt;Beta(1);
+		aco-&gt;RoundBestBoost(1);
+		aco-&gt;GlobalBestBoost(10);
+	} else if (ctx.process_id() == 3) {
+		aco-&gt;Rho(0.1);
+		aco-&gt;Alpha(1);
+		aco-&gt;Beta(1);
+		aco-&gt;RoundBestBoost(1);
+		aco-&gt;GlobalBestBoost(10);
+	}*/
 	aco-&gt;MaxMin(0);
 	aco-&gt;Minimize(minimize);
 	aco-&gt;AcoType(cAntColony::ACO_ELITIST_ANT_SYSTEM_GLOBAL | cAntColony::ACO_ELITIST_ANT_SYSTEM_ROUND);
@@ -195,7 +216,7 @@ double traceCost(Trail &amp;t) {
 	printf(" %ld ]\n", bestTrail[bestTrail.length - 1]);
 
 	ctx.quit();
-</code></transition><transition clock="False" collective="False" id="135" label-x="432" label-y="294" name="Compute" priority="" sx="82" sy="42" x="397" y="276"><guard x="415" y="260">gen &lt; param::Generation()</guard><code>	ca::Token&lt;Trail&gt; *t = var.neighbor_best.begin();
+</code></transition><transition clock="False" collective="False" id="135" label-x="433.0" label-y="294.0" name="Compute" priority="" sx="82" sy="42" x="398.0" y="276.0"><guard x="416.0" y="260.0">gen &lt; param::Generation()</guard><code>	ca::Token&lt;Trail&gt; *t = var.neighbor_best.begin();
 	while (t != NULL) {
 		if (t-&gt;value.cost &lt; var.best.cost || var.best.cost == -1) {
 			// better neighbore
@@ -214,17 +235,25 @@ double traceCost(Trail &amp;t) {
 	
 	// is it new result better?
 	double fitness = var.colony.colony-&gt;BestAntPtr(true)-&gt;Fitness();
-	if (fitness &lt; var.best.cost || var.best.cost == -1) {
+	//printf("colony: %f; best-place: %f\n", fitness, var.best.cost);
+	if (fitness &lt;= var.best.cost || var.best.cost == -1) {
 		//const arg::cArrayConst&lt;unsigned long&gt; &amp;trailAnt = var.colony.colony-&gt;BestAntPtr(false)-&gt;Trail();
 		const std::vector&lt;unsigned long&gt; &amp;trailAnt = var.colony.colony-&gt;BestAntPtr(false)-&gt;Trail();
 		var.best = Trail(&amp;trailAnt[0], trailAnt.size(), fitness);
 		
-		// send copy
-		var.sent_best = var.best;
 	}
-</code></transition><transition clock="False" collective="True" id="375" label-x="381" label-y="537" name="Send&#10;result" priority="" sx="70" sy="36" x="346" y="519"><guard x="346" y="499" /><root x="367" y="560">0</root></transition><edge from_item="105" id="314" to_item="112"><inscription x="244.0" y="378.0">param::Generation()</inscription></edge><edge from_item="103" id="335" to_item="112"><inscription x="156.0" y="277.0">colony</inscription><point x="150" y="222" /><point x="150" y="438" /></edge><edge from_item="105" id="213" to_item="135"><inscription x="305.0" y="282.0">gen</inscription><point x="230" y="299" /></edge><edge bidirectional="true" from_item="135" id="139" to_item="103"><inscription x="269.0" y="205.0">colony</inscription><point x="309" y="221" /></edge><edge from_item="148" id="150" to_item="147"><inscription x="595.0" y="518.0">bests</inscription></edge><edge from_item="152" id="174" to_item="112"><inscription x="342.0" y="417.0">best</inscription></edge><edge bidirectional="true" from_item="135" id="334" to_item="152"><inscription x="401.0" y="365.0">best</inscription></edge><edge from_item="135" id="339" to_item="338"><inscription x="471.0" y="345.0">[if (sent_best.cost &gt;= 0)]
+	// send copy
+	var.sent_best = var.best;
+	
+	printf("ID: %d. round: %d; fitness %.2f\n", ctx.process_id(), var.gen, var.best.cost);
+	
+	if (param::Stop() &gt; 0 &amp;&amp; param::Stop() &gt;= fitness) {
+		printf("QUIT\n");
+		ctx.quit();
+	}
+</code></transition><transition clock="False" collective="True" id="375" label-x="381" label-y="537" name="Send&#10;result" priority="" sx="70" sy="36" x="346" y="519"><guard x="346" y="499" /><root x="367" y="560">0</root></transition><edge from_item="105" id="314" to_item="112"><inscription x="244.0" y="378.0">param::Generation()</inscription></edge><edge from_item="103" id="335" to_item="112"><inscription x="156.0" y="277.0">colony</inscription><point x="150" y="222" /><point x="150" y="438" /></edge><edge from_item="105" id="213" to_item="135"><inscription x="305.450038999" y="281.999151104">gen</inscription><point x="230" y="299" /></edge><edge bidirectional="true" from_item="135" id="139" to_item="103"><inscription x="269.0" y="205.0">colony</inscription><point x="309" y="221" /></edge><edge from_item="148" id="150" to_item="147"><inscription x="595.0" y="518.0">bests</inscription></edge><edge from_item="152" id="174" to_item="112"><inscription x="342.0" y="417.0">best</inscription></edge><edge bidirectional="true" from_item="135" id="334" to_item="152"><inscription x="401.507033653" y="365.0">best</inscription></edge><edge from_item="135" id="339" to_item="338"><inscription x="471.38432304" y="345.0">[if (sent_best.cost &gt;= 0)]
 sent_best @ (ctx.process_id() + 1) %
-                     ctx.process_count()</inscription><point x="470" y="383" /></edge><edge from_item="338" id="340" to_item="135"><inscription x="543.0" y="281.0">[bulk] neighbor_best</inscription><point x="698" y="297" /></edge><edge from_item="112" id="374" to_item="373"><inscription x="251.0" y="477.0">best</inscription></edge><edge from_item="373" id="376" to_item="375"><inscription x="289.0" y="519.0">best</inscription></edge><edge from_item="375" id="377" to_item="148"><inscription x="443.0" y="518.0">[gather] best</inscription></edge><edge from_item="135" id="415" to_item="105"><inscription x="304.249874515" y="323.697458052">gen + 1</inscription><point x="379.5" y="341.5" /></edge></net><net id="379" name="Main_copy"><area id="380" sx="627" sy="311" x="138" y="181"><init x="138" y="166">ca::range(0, ctx.process_count())</init></area><place id="381" label-x="230" label-y="222" name="" radius="21" sx="0" sy="0" x="230" y="222"><place-type x="247" y="239">AntColony</place-type><init x="247" y="192" /><code>	
+                     ctx.process_count()</inscription><point x="470" y="383" /></edge><edge from_item="338" id="340" to_item="135"><inscription x="543.707762557" y="281.0">[bulk] neighbor_best</inscription><point x="698" y="297" /></edge><edge from_item="112" id="374" to_item="373"><inscription x="251.0" y="477.0">best</inscription></edge><edge from_item="373" id="376" to_item="375"><inscription x="289.0" y="519.0">best</inscription></edge><edge from_item="375" id="377" to_item="148"><inscription x="443.0" y="518.0">[gather] best</inscription></edge><edge from_item="135" id="415" to_item="105"><inscription x="304.0" y="323.0">gen + 1</inscription><point x="379" y="341" /></edge></net><net id="379" name="Main_copy"><area id="380" sx="627" sy="311" x="138" y="181"><init x="138" y="166">ca::range(0, ctx.process_count())</init></area><place id="381" label-x="230" label-y="222" name="" radius="21" sx="0" sy="0" x="230" y="222"><place-type x="247" y="239">AntColony</place-type><init x="247" y="192" /><code>	
 	arg::cRandom::Init();
 	
 	const bool debug = false;//cl.Boolean("d") || cl.Boolean("-debug");
