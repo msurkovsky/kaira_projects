@@ -93,7 +93,8 @@ long cAnt::NextPosition(void)
 	{
 		int idx = Nik[i];
 
-		double bit = pow(m_Pheromones[m_Position * m_GraphDim + idx], m_Alpha) + pow(APriori(m_Position, idx), m_Beta);
+//		double bit = pow(m_Pheromones[m_Position * m_GraphDim + idx], m_Alpha) + pow(APriori(m_Position, idx), m_Beta);
+		double bit = m_Pheromones[m_Position * m_GraphDim + idx] * m_Alpha + APriori(m_Position, idx) * m_Beta;
 		dbg	<< "Bit for " << m_Position << ", " << idx << " is " << bit << ".\n";
 		sum += bit;
 		pij[i] = bit;
