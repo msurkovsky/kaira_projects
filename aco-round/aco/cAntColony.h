@@ -56,6 +56,10 @@ class cAntColony: public arg::cDebuggable
 
 	public:
 
+        void printConstants(int process_id) {
+            printf("Process ID: %d; Alpha: %.2f, Beta: %.2f, Rho: %.2f; local: %d, global: %d\n", process_id, m_Alpha, m_Beta, m_Rho, m_RoundBestBoost, m_GlobalBestBoost);
+        }
+
 		/** Different types of the algorithm. */
 		unsigned static int const ACO_ANT_SYSTEM = 0;
 		unsigned static int const ACO_ELITIST_ANT_SYSTEM_ROUND = 1;
