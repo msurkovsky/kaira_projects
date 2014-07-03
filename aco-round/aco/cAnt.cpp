@@ -35,7 +35,10 @@ void cAnt::GoForward()
 	m_Position = StartNode();
 	for (unsigned int i = 0; i < m_TrailLength && !m_DeadEnd; i++)
 	{
+//    	arg::cTimer timer;
+//    	timer.CpuStart();
 		StepForward();
+//	    std::cout << i << ". StepForward: " << timer.CpuStop().CpuMillis() << std::endl;
 	}
 //	m_Trail.Append(m_Position);
 	m_Trail.push_back(m_Position);

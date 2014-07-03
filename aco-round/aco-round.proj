@@ -6,7 +6,7 @@ aco/cAnt.cpp
 aco/cAntColony.cpp
 aco/cAntFactory.cpp
 aco/tsp/cTspAnt.cpp
-aco/tsp/cTspAntFactory.cpp</build-option><build-option name="CFLAGS">-O2 -I /home/martin/projects/kaira_projects/aco-round</build-option><head-code>#include "arg/utils/cRandom.h"
+aco/tsp/cTspAntFactory.cpp</build-option><build-option name="CFLAGS">-O2 -fopenmp -I /home/sur096/projects/kaira_projects/aco-round</build-option><head-code>#include "arg/utils/cRandom.h"
 #include "arg/utils/cCLParser.h"
 
 #include "aco/cAntColony.h"

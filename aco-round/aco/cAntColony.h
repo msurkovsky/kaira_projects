@@ -20,6 +20,7 @@
 #define CANTCOLONY_H_
 
 #include <climits>
+#include <omp.h>
 
 #include "../arg/utils/cTimer.h"
 

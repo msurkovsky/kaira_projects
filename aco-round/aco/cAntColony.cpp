@@ -47,27 +47,34 @@ void cAntColony::Rho(const double val)
 
 void cAntColony::GoForward(void)
 {
+    #pragma omp parallel for
 	for (unsigned int i = 0; i < m_AntCnt; i++)
 	{
+//        printf("%d. thread: %d\n", i, omp_get_thread_num());
 		m_Antz[i]->GoForward();
 	}
 }
 
+
 void cAntColony::ComputeFitness(void)
 {
-	m_BestAntFitness = m_Antz[0]->ComputeFitness();
-	//m_BestAntFitness = m_Antz[0]->Fitness();
-	m_BestAntIdx = 0;
-	dbg	<< "Ant " << 0 << " fitness is " << m_BestAntFitness << ".\n";
-	for (unsigned int i = 1; i < m_AntCnt; i++)
+    double *m_Fitnesses = new double[m_AntCnt];
+
+    #pragma omp parallel for
+	for (unsigned int i = 0; i < m_AntCnt; i++)
 	{
-		double fit = m_Antz[i]->ComputeFitness();
-		//double fit = m_Antz[i]->Fitness();
-		dbg	<< "Ant " << i << " fitness is " << fit << ".\n";
+//        printf("i: %d. thread: %d\n", i, omp_get_thread_num());
+		m_Fitnesses[i] = m_Antz[i]->ComputeFitness();
+	}
+
+	m_BestAntIdx = 0;
+	m_BestAntFitness = m_Fitnesses[0];
+    for (unsigned int i = 1; i < m_AntCnt; i++)
+	{
 		// Find best ant in this round
-		if ((m_Minimize && (fit < m_BestAntFitness)) || (!m_Minimize && (fit > m_BestAntFitness)))
+		if ((m_Minimize && (m_Fitnesses[i] < m_BestAntFitness)) || (!m_Minimize && (m_Fitnesses[i] > m_BestAntFitness)))
 		{
-			m_BestAntFitness = fit;
+			m_BestAntFitness = m_Fitnesses[i];
 			m_BestAntIdx = i;
 		}
 	}
@@ -86,8 +93,10 @@ void cAntColony::ComputeFitness(void)
 
 void cAntColony::PlacePheromones(void)
 {
+    #pragma omp parallel for
 	for (unsigned int i = 0; i < m_AntCnt; i++)
 	{
+//        printf("i: %d. thread: %d\n", i, omp_get_thread_num());
 		// Place pheromones. The first parameter is used to 'normalize' (i.e. divide) the pheromone values.
 		m_Antz[i]->PlacePheromones(m_BestAntFitness, m_Minimize);
 	}
@@ -96,8 +105,11 @@ void cAntColony::PlacePheromones(void)
 void cAntColony::Evaporate(void)
 {
 	float * pheromones = m_Factory->Pheromones();
+
+    #pragma omp parallel for
 	for (unsigned int i = 0; i < m_Factory->GraphDim() * m_Factory->GraphDim(); i++)
 	{
+//        printf("i: %d. thread: %d\n", i, omp_get_thread_num());
 		double before = pheromones[i];
 		pheromones[i] *= (1 - m_Rho);
 		double after = pheromones[i];
@@ -147,6 +159,7 @@ cAnt * cAntColony::Execute(const unsigned int limit)
 				m_GlobalBestAnt->PlacePheromones(m_BestAntFitness, m_Minimize);
 			}
 		}
+
 		Evaporate();
 		std::cout << i << "\t" << timer.CpuStop().CpuMillis() << "\t" << m_Antz[m_BestAntIdx]->Fitness() << std::endl;
 	}
@@ -168,11 +181,20 @@ void cAntColony::StartExecution(void)
 
 void cAntColony::Execution(void)
 {
+//	arg::cTimer timer;
+//	timer.CpuStart();
 	GoForward();
+//	std::cout << "GoForward: " << timer.CpuStop().CpuMillis() << std::endl;
+
+//    timer.CpuStart();
 	ComputeFitness();
+//	std::cout << "ComputeFitness: " << timer.CpuStop().CpuMillis() << std::endl;
 
+//    timer.CpuStart();
 	PlacePheromones();
+//	std::cout << "PlacePheromones: " << timer.CpuStop().CpuMillis() << std::endl;
 
+//    timer.CpuStart();
 	if (m_AcoType & ACO_ELITIST_ANT_SYSTEM_ROUND)
 	{
 		for (unsigned int j = 0; j < m_RoundBestBoost; j++)
@@ -187,7 +209,11 @@ void cAntColony::Execution(void)
 			m_GlobalBestAnt->PlacePheromones(m_BestAntFitness, m_Minimize);
 		}
 	}
+//	std::cout << "Boost: " << timer.CpuStop().CpuMillis() << std::endl;
+
+//    timer.CpuStart();
 	Evaporate();
+//	std::cout << "Evaporate: " << timer.CpuStop().CpuMillis() << std::endl;
 	//std::cout << "\t" << timer.CpuStop().CpuMillis() << "\t" << m_Antz[m_BestAntIdx]->Fitness() << std::endl;
 }
 
